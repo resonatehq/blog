@@ -3,7 +3,7 @@ import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
-  title: 'My Site',
+  title: 'Docs',
   tagline: 'Dinosaurs are cool',
   favicon: 'img/favicon.ico',
 
@@ -33,15 +33,10 @@ const config: Config = {
     [
       'classic',
       {
-        docs: {
-          sidebarPath: './sidebars.ts',
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
-        },
+        docs: false,
         blog: {
-          showReadingTime: true,
+          routeBasePath: '/', // Serve the docs at the site's root (ref: https://docusaurus.io/docs/next/docs-introduction#home-page-docs)
+          // sidebarPath: './sidebars.ts',
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
@@ -58,21 +53,14 @@ const config: Config = {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
-      title: 'My Site',
+      title: 'Resonate',
       logo: {
-        alt: 'My Site Logo',
-        src: 'img/logo.svg',
+        alt: 'Resonate Logo',
+        src: 'img/docusaurus.png',
       },
       items: [
         {
-          type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
-          position: 'left',
-          label: 'Tutorial',
-        },
-        {to: '/blog', label: 'Blog', position: 'left'},
-        {
-          href: 'https://github.com/facebook/docusaurus',
+          href: 'https://github.com/resonatehq/resonate',
           label: 'GitHub',
           position: 'right',
         },
@@ -82,11 +70,11 @@ const config: Config = {
       style: 'dark',
       links: [
         {
-          title: 'Docs',
+          title: 'Resonate',
           items: [
             {
-              label: 'Tutorial',
-              to: '/docs/intro',
+              label: 'Home',
+              href: 'https://github.com/resonatehq/resonate',
             },
           ],
         },
@@ -94,16 +82,16 @@ const config: Config = {
           title: 'Community',
           items: [
             {
-              label: 'Stack Overflow',
+              label: 'Slack',
               href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-            },
-            {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
             },
             {
               label: 'Twitter',
               href: 'https://twitter.com/docusaurus',
+            },
+            {
+              label: 'LinkedIn',
+              href: 'https://discordapp.com/invite/docusaurus',
             },
           ],
         },
@@ -111,17 +99,13 @@ const config: Config = {
           title: 'More',
           items: [
             {
-              label: 'Blog',
-              to: '/blog',
-            },
-            {
               label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
+              href: 'https://github.com/resonatehq/resonate',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} ResonateHQ, Inc.`,
     },
     prism: {
       theme: prismThemes.github,
