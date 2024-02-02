@@ -24,9 +24,9 @@ When choosing an object oriented programming language, this framework is the len
 
 However, a programming model is not only defined by a programming language but by the totality of the environment. Libraries, frameworks, and platforms have the ability to change the set of concepts, relationships, and contstraints. 
 
-For example, even when writing object oriented programs, your programs change significantly when you add threads. Your programs do not stop being object oriented programs, but they started to become concurrent programs, a change that forces you to think about problems and solutions differently than from before.
+For example, even when writing object oriented programs, your programs change significantly when you add threads. Your programs do not stop being object oriented programs, but they start to become concurrent programs, a change that forces you to think about problems and solutions differently than before.
 
-Even seamingly small changes can have big impacts. For example, adding retries in case of failures changes the execution semantics from at most once to at least once, requiring you to look at the problem and the solution in a different light. Now you have to ensure that all of your functions are idempotent to guarantee correctness.
+Even seemingly small changes can have big impacts. For example, adding retries in case of failure changes the execution semantics from at most once to at least once, requiring you to look at the problem and the solution in a different light. Now you have to ensure that all of your functions are idempotent to guarantee correctness.
 
 ## Distributed Async Await
 
