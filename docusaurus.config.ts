@@ -1,22 +1,21 @@
-import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
-  title: 'Docs',
-  tagline: 'Dinosaurs are cool',
+  title: 'Resonate',
+  tagline: ' dead simple programming model for modern applications',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
-  url: 'https://your-docusaurus-site.example.com',
+  url: 'https://www.resonatehq.io',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+  organizationName: 'resonatehq', // Usually your GitHub org/user name.
+  projectName: 'blog', // Usually your repo name.
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -31,19 +30,21 @@ const config: Config = {
 
   presets: [
     [
-      'classic',
+      '@docusaurus/preset-classic',
       {
-        docs: false,
         blog: {
           routeBasePath: '/', // Serve the docs at the site's root (ref: https://docusaurus.io/docs/next/docs-introduction#home-page-docs)
-          // sidebarPath: './sidebars.ts',
+          // sidebarPath: '',
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+          // editUrl: '',
         },
+        docs: false,
         theme: {
-          customCss: './src/css/custom.css',
+          customCss: [
+            './static/css/custom.css',
+            './static/css/boxicons.min.css'
+          ],
         },
       } satisfies Preset.Options,
     ],
@@ -51,65 +52,67 @@ const config: Config = {
 
   themeConfig: {
     // Replace with your project's social card
-    image: 'img/docusaurus-social-card.jpg',
+    // image: 'img/docusaurus-social-card.jpg',
+    colorMode: {
+      defaultMode: 'light',
+      disableSwitch: true,
+      respectPrefersColorScheme: true,
+    },
     navbar: {
       title: 'Resonate',
       logo: {
         alt: 'Resonate Logo',
-        src: 'img/docusaurus.png',
+        src: 'img/logo.svg',
+        href: 'https://www.resonatehq.io',
+        target: '_self',
+        width: 40,
       },
       items: [
         {
+          to: 'https://docs.resonatehq.io',
+          label: 'Docs',
+          position: 'right',
+          target: '_self',
+        },
+        {
+          to: 'https://blog.resonatehq.io',
+          label: 'Blog',
+          position: 'right',
+          target: '_self',
+        },
+        {
           href: 'https://github.com/resonatehq/resonate',
-          label: 'GitHub',
+          html: '<i class="bx bx-md bxl-github"></i>',
           position: 'right',
         },
       ],
     },
     footer: {
-      style: 'dark',
+      style: 'light',
       links: [
         {
-          title: 'Resonate',
-          items: [
-            {
-              label: 'Home',
-              href: 'https://github.com/resonatehq/resonate',
-            },
-          ],
+          html: `
+            <a href="https://twitter.com/resonatehqio" target="_blank" rel="noopener noreferrer" aria-label="Resonate Twitter">
+              <i class="bx bx-sm bxl-twitter"></i>
+            </a>
+          `,
         },
         {
-          title: 'Community',
-          items: [
-            {
-              label: 'Slack',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-            },
-            {
-              label: 'Twitter',
-              href: 'https://twitter.com/docusaurus',
-            },
-            {
-              label: 'LinkedIn',
-              href: 'https://discordapp.com/invite/docusaurus',
-            },
-          ],
+          html: `
+            <a href="https://join.slack.com/t/resonatehqcommunity/shared_invite/zt-22h6iu4m8-2Tl9M25IZduNU_sBcPteMg" target="_blank" rel="noopener noreferrer" aria-label="Resonate Slack">
+              <i class="bx bx-sm bxl-slack"></i>
+            </a>
+          `,
         },
         {
-          title: 'More',
-          items: [
-            {
-              label: 'GitHub',
-              href: 'https://github.com/resonatehq/resonate',
-            },
-          ],
+          html: `
+            <a href="https://github.com/resonatehq/resonate" target="_blank" rel="noopener noreferrer" aria-label="Resonate GitHub">
+              <i class="bx bx-sm bxl-github"></i>
+            </a>
+          `,
         },
       ],
       copyright: `Copyright © ${new Date().getFullYear()} ResonateHQ, Inc.`,
-    },
-    prism: {
-      theme: prismThemes.github,
-      darkTheme: prismThemes.dracula,
     },
   } satisfies Preset.ThemeConfig,
 };
