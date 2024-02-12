@@ -39,8 +39,6 @@ By insisting on their own proprietary queues, vendors shut the door on your appl
 
 Forcing a user to commit to a proprietary queue serves as a "wolf in sheep's clothing", subtly promoting vendor lock-in. Opting for a proprietary queue ties a significant portion of your system to a single provider, effectively restricting future options. Such exclusivity forces you to  stake your success on the provider's technology.
 
-%% Add in divorce process
-
 When considering queuing solutions, the broader implications of vendor lock-in, and the benefits of a versatile, open architecture should guide your decision-making process. 
 
 # The out-of-the-box argument
