@@ -33,6 +33,8 @@ Queues are foundational technologies, deeply integrated within vast ecosystems, 
 
 Consider AWS offering Simple Queue Service (SQS) as part of an extensive ecosystem. SQS does not exist in isolation but is a cog in a much larger machine, seamlessly integrating with services like AWS EventBridge and AWS Lambda. These services provide advanced functionalities such as event matching, event routing, and serverless computing, all while ensuring robust security through embedded authentication, authorization, and comprehensive logging and monitoring features.
 
+Or consider NATS. NATS offers additional functionality going beyond queueing systems such as the NATS key value store or the NATS Execution Engine to host functions and services.
+
 By insisting on their own proprietary queues, vendors shut the door on your application from taking advantage of a rich ecosystem－or, if you already made significant investments into this ecosystem, make it hard for you to reap the benefits.
 
 # The vendor wolf in sheep's clothing
