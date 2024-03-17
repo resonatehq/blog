@@ -9,7 +9,7 @@ Assertions are widely used in testing frameworks such as JUnit (for Java), Jest 
 
 # What are Assertions?
 
-An assertion is a condition that must always be true. If the conditions is found to be false, the application will terminate. Many programming languagessuch as Python, Java, C#, Rust and more natively support assertions.
+An assertion is a condition that must always be true. If the conditions is found to be false, the application will terminate. Many programming languages such as Python, Java, C#, Rust and more natively support assertions.
 
 ```bash
 // Python
@@ -69,13 +69,13 @@ def something(input):
     return result
 ```
 
-The combination of invariants preconditions, and postconditions help catch bugs earlier because they cannot be ignored! They also serve as better code comments than code comments. Unlike regular comments, internal assertions cannot be outdated because the program with halt!
+The combination of invariants, preconditions, and postconditions help catch bugs earlier because they cannot be ignored! They also serve as better code comments than code comments. Unlike regular comments, internal assertions cannot be outdated because the program with halt!
 
 # Internal Assertions vs Error Handling
 
 The biggest concern is knowing when to use assertions vs regular old error handling. At Resonate, we consider two types of errors when writing applications:
 
-1. **_Expected Errors_**: know how to handle the error at the some layer in the software. This might require propagating the error to upper layers of the software.
+1. **_Expected Errors_**: know how to handle the error at the same layer in the software. This might require propagating the error to upper layers of the software.
 
 2. **_Unexpected Errors_**: should kill the application immediately without propagating the error further.
 
@@ -99,4 +99,4 @@ While this approach to using assertions is uncommon, a few notable pieces of sof
 
 # Conclusion
 
-Thinking about software in terms of invariants as positively shaped the speed and quality of software we deliver. For more examples of how we use assertions, please visit our [GitHub repository](https://github.com/resonatehq/resonate) and check it out for yourself.
+Thinking about software in terms of invariants has positively shaped the speed and quality of software we deliver. For more examples of how we use assertions, please visit our [GitHub repository](https://github.com/resonatehq/resonate) and check it out for yourself.
