@@ -87,7 +87,7 @@ Another way to think of this is that assertions detect developer errors while er
 
 Property-based testing (PBT) uses random inputs to check the SUT for high-level invariants or properties. At Resonate, we believe the pairing of internal assertions and PBT provides a powerful approach to ensuring code quality and reliability. This combination allows for extensive exploration of code paths, increasing the likelihood of uncovering bugs and edge cases that may be missed by traditional unit and integration tests.
 
-# Evidence of Other Using Assertions
+# Evidence of Others Using Assertions
 
 While this approach to using assertions is uncommon, a few notable pieces of software follow this approach.
 
