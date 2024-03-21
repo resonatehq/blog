@@ -80,7 +80,7 @@ A system is determinitic if for every Initial State σ, the cardinality of the s
 ∀ σ ∈ Σ : | traces(S, σ, R) | = 1
 ```
 
-A system is non-deterministic if for every Initial State σ, the cardinality of the set of traces for System S under Runtime R is larger than 1:
+A system is non-deterministic if there exists an Initial State σ such that the cardinality of the set of traces for System S under Runtime R is larger than 1:
 
 ```
 ∃ σ ∈ Σ : | traces(S, σ, R) | > 1
