@@ -53,7 +53,7 @@ resonate.run("foo", "foo.1", resonate.options({
 
 Running this function directly would, on average, fail 50% of the time. But executing via Resonate (almost) always succeeds. Why is this?
 
-By default when an exception is thrown, a Resonate function will be retried with exponential backoff policy up until a specified timeout. The default timeout of a Resonate function is ten seconds. This means that our function may be retried up to six times in a single execution, dropping the probability of seeing an exception to just 0.8%.
+By default when an exception is thrown, a Resonate function will be retried with exponential backoff up until a specified timeout. The default timeout of a Resonate function is ten seconds. This means that our function may be retried up to six times in a single execution, dropping the probability of seeing an exception to just 0.8%.
 
 You can play around with different retry policies by changing the options. Resonate provides exponential, linear, and no retries out-of-the-box.
 
@@ -124,11 +124,11 @@ When you run this program, there is a 50% chance that it will come crashing to a
 
 To demonstrate recovery we need to first observe a crash. If you get lucky and the execution succeeds on the first attempt, keep bumping the id until the program crashes. Once a crash occurs, restart the program. On restart any pending executions will be resumed and once again there is a 50% chance we will see another crash, if this happens keep restarting the program until the execution succeeds.
 
-What is going on here? When your program is wired up to a Resonate server, Resonate writes all Durable Promises to storage. A Durable Promise is the core abstraction upon which Resonate is built. Like familiar promises, Durable Promises can be fulfilled exactly once; unlike familiar promises, Durable Promises are both addressable and persistent.
+What is going on here? When your program is wired up to a Resonate server, Resonate writes a representation of the function call to storage using a concept called a Durable Promise, the core abstraction upon which Resonate is built. Like familiar promises, Durable Promises can be fulfilled exactly once; unlike familiar promises, Durable Promises are both addressable and persistent.
 
 But what does this mean in practice?
 
-When Resonate is started with a call to `resonate.start()` a background process is kicked off on an interval to check for any pending Durable Promises. When one is found, Resonate first acquires a lock to ensure mutual exclusion, and then calls the corresponding function. This process repeats until either all Durable Promises are fulfilled or timed out.
+When Resonate is started with a call to `resonate.start()` a background process is kicked off on an interval to check for any pending Durable Promises. When one is found, Resonate first acquires a lock to ensure mutual exclusion, and then calls the function corresponding to the Durable Promise. This process repeats until either all Durable Promises are fulfilled or timed out.
 
 ## Key Takeaways
 
