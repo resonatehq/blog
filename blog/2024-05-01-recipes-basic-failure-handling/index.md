@@ -14,9 +14,10 @@ To follow along, head over to the Resonate Recipes [repository on GitHub](https:
 ## Catchable and Non-catchable Failure
 
 In distributed systems, we have to distinguish between catchable failure and non-catchable failure. 
-Catchable failures refer to the set of failures that can be detected and mitigated by a process itself e.g. in a try catch block. Examples include  io failure such as a file not found exception or networking failure such as a request timeout exception.
 
-Non-catchable errors refer to the set of failures that cannot be detected and mitigated by a process. My favourite mental model is to imagine the plug being pulled on the machine running a process.
+**Catchable failures** refer to the set of failures that can be detected and mitigated by a process itself e.g. in a try catch block. Examples include  io failure such as a file not found exception or networking failure such as a request timeout exception.
+
+**Non-catchable failures** refer to the set of failures that cannot be detected and mitigated by a process. My favourite mental model is to imagine the plug being pulled on the machine running a process.
 
 
 ### Recovering from catchable failure
@@ -48,7 +49,7 @@ resonate.run("foo", "foo.1", resonate.options({
 
 Running this function directly would, on average, fail 50% of the time. But executing via Resonate (almost) always succeeds. Why is this?
 
-By default when an exception is thrown, a Resonate function will be retried with exponential backoff policy up until a specified timeout. The default timeout of a Resonate function is ten seconds. This means that our function may be retried up to 6 times in a single execution, dropping the probability of seeing an exception to just 0.8%.
+By default when an exception is thrown, a Resonate function will be retried with exponential backoff policy up until a specified timeout. The default timeout of a Resonate function is ten seconds. This means that our function may be retried up to six times in a single execution, dropping the probability of seeing an exception to just 0.8%.
 
 You can play around with different retry policies by changing the options. Resonate provides exponential, linear, and no retries out-of-the-box.
 
@@ -128,8 +129,8 @@ When Resonate is started with a call to `resonate.start()` a background process 
 ## Key Takeaways
 
 In this inaugural edition of Resonate Recipes we have seen that:
-- Resonate mitigates **catchable errors** through retries.
-- Resonate mitigates **non-catchable errors** by restarting executions.
+- Resonate mitigates **catchable failures** through retries.
+- Resonate mitigates **non-catchable failures** by restarting executions.
 - Resonate uses **Durable Promises** to implement failure mitigation (and much more).
 
 If you want dive further into Resonate, check out our [docs](https://docs.resonatehq.io) and our [quickstart](https://github.com/resonatehq/quickstart-ts). If you want to learn more about Durable Promises check out the [specification](https://github.com/resonatehq/durable-promise-specification).
