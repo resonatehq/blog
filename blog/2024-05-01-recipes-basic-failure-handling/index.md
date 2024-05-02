@@ -13,11 +13,15 @@ To follow along, head over to the Resonate Recipes [repository on GitHub](https:
 
 ## Catchable and Non-catchable Failure
 
+import Tweet from '@site/src/components/Twitter';
+
+<Tweet id="1784628736056521120"></Tweet>
+
 In distributed systems, we have to distinguish between catchable failure and non-catchable failure. 
 
-**Catchable failures** refer to the set of failures that can be detected and mitigated by a process itself e.g. in a try catch block. Examples include  io failure such as a file not found exception or networking failure such as a request timeout exception.
+- **Catchable failures** refer to the set of failures that can be detected and mitigated by a process itself e.g. in a try catch block. Examples include  io failure such as a file not found exception or networking failure such as a request timeout exception.
 
-**Non-catchable failures** refer to the set of failures that cannot be detected and mitigated by a process. My favourite mental model is to imagine the plug being pulled on the machine running a process.
+- **Non-catchable failures** refer to the set of failures that cannot be detected and mitigated by a process. My favourite mental model is to imagine the plug being pulled on the machine running a process.
 
 
 ### Recovering from catchable failure
