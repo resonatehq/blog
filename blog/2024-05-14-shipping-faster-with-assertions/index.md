@@ -79,9 +79,9 @@ The biggest concern is knowing when to use assertions vs regular old error handl
 
 2. **_Unexpected Errors_**: should kill the application immediately without propagating the error further.
 
-With those two types of errors you can see that assertions are a great fit for unexpected errors. These are errors that break the assumptions you made of how your software works which is why they are unexpected.
+With those two types of errors you can see that assertions are a great fit for unexpected errors. These are errors that break the assumptions you made of how your software works which is why they are unexpected. Another way to think of this is that assertions detect developer errors while error handling detects user errors. User errors are expected and can be handled, while assertion errors signal a misunderstanding of what is possible in your program.
 
-Another way to think of this is that assertions detect developer errors while error handling detects user errors. User errors are expected and can be handled, while assertion errors signal a misunderstanding of what is possible in your program.
+In case an invariant is violated, we want to ensure that "nothing bad will ever happen", therefore shutting down instead of taking another step (arguably, if an invariant is violated, something bad already happened, so you could say we want to ensure that "nothing else bad will happen").
 
 # Property-Based Testing with Assertions
 
