@@ -1,15 +1,20 @@
 dtornow:
   name: Dominik Tornow
   title: Founder & CEO
-  url: https://twitter.com/DominikTornow
+  url: https://x.com/DominikTornow
   image_url: https://pbs.twimg.com/profile_images/1298463326423277569/N2SAaljB_400x400.jpg
 gguerra:
   name: Gabriel Guerra
   title: Resonate Alumni
-  url: https://twitter.com/gabe_guerra_
+  url: https://x.com/gabe_guerra_
   image_url: https://pbs.twimg.com/profile_images/1599797936795394058/v8J8rF4I_400x400.jpg
 dfarr:
   name: David Farr
   title: Founder
-  url: https://twitter.com/david_f_farr
+  url: https://x.com/david_f_farr
   image_url: https://pbs.twimg.com/profile_images/1660796501696843776/ylENj7KZ_400x400.jpg
+avillegas:
+  name: Andres Villegas
+  title: Software Engineer
+  url: https://x.com/andville_
+  image_url: https://pbs.twimg.com/profile_images/1188524581004435456/NgM0rfei_400x400.jpg
