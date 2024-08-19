@@ -38,6 +38,8 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           // editUrl: '',
+          blogSidebarCount: "ALL",
+          blogSidebarTitle: "Posts",
         },
         docs: false,
         theme: {
