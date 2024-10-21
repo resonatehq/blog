@@ -112,7 +112,9 @@ First, create a data structure that inherits what Resonate calls a Command inter
 The data structure must include the data to be inserted into the database.
 
 <!--SNIPSTART examples-py-features-batching-init {"selectedLines":["1","6","16-19"]}-->
-[features/batching/src/batching/__init__.py](https://github.com/resonatehq/examples-py/blob/main/features/batching/src/batching/__init__.py)
+
+[features/batching/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/main/features/batching/src/batching/__init__.py)
+
 ```py
 from dataclasses import dataclass
 # ...
@@ -123,13 +125,16 @@ from resonate.commands import Command
 class InsertUser(Command):
     id: int
 ```
+
 <!--SNIPEND-->
 
 Then, create a handler that can process a batch of SQL queries.
 This should look similar to the code that batched the SQL queries above.
 
 <!--SNIPSTART examples-py-features-batching-init {"selectedLines":["2", "21-30"]}-->
-[features/batching/src/batching/__init__.py](https://github.com/resonatehq/examples-py/blob/main/features/batching/src/batching/__init__.py)
+
+[features/batching/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/main/features/batching/src/batching/__init__.py)
+
 ```py
 # ...
 from resonate.context import Context
@@ -145,12 +150,15 @@ def _batch_handler(_: Context, users: list[InsertUser]):
     conn.commit()
     print(f"Values from {first_value} to {last_value} have been inserted to database.")
 ```
+
 <!--SNIPEND-->
 
 Next, register the data structure and the handler with the Resonate Scheduler.
 
 <!--SNIPSTART examples-py-features-batching-init {"selectedLines":["3-5","13-14", "40-41"]}-->
-[features/batching/src/batching/__init__.py](https://github.com/resonatehq/examples-py/blob/main/features/batching/src/batching/__init__.py)
+
+[features/batching/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/main/features/batching/src/batching/__init__.py)
+
 ```py
 # ...
 from resonate.scheduler import Scheduler
@@ -163,13 +171,16 @@ resonate = Scheduler(LocalPromiseStore(), processor_threads=1)
 # Register the batch handler and data structure with the Resonate Scheduler
 resonate.register_command_handler(InsertUser, _batch_handler, retry_policy=never())
 ```
+
 <!--SNIPEND-->
 
 Finally, create a top-level function that can be invoked over and over again and passes the data to Resonate to manage.
 Register it with the Resonate Scheduler, and then call that function with Resonate's `run()` method.
 
 <!--SNIPSTART examples-py-features-batching-init {"selectedLines":["32-35", "37-38","43", "50-58"]}-->
-[features/batching/src/batching/__init__.py](https://github.com/resonatehq/examples-py/blob/main/features/batching/src/batching/__init__.py)
+
+[features/batching/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/main/features/batching/src/batching/__init__.py)
+
 ```py
 # ...
 # Definte the top level function that uses batching
@@ -192,6 +203,7 @@ def main() -> None:
     for p in promises:
         p.result()
 ```
+
 <!--SNIPEND-->
 
 :::tip Coroutines in action
@@ -204,7 +216,9 @@ You will see coroutines generically referred to as functions, but know that you 
 From top to bottom, taking into account database setup, a working application would look something like this:
 
 <!--SNIPSTART examples-py-features-batching-init-->
-[features/batching/src/batching/__init__.py](https://github.com/resonatehq/examples-py/blob/main/features/batching/src/batching/__init__.py)
+
+[features/batching/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/main/features/batching/src/batching/__init__.py)
+
 ```py
 from dataclasses import dataclass
 from resonate.context import Context
@@ -265,6 +279,7 @@ def main() -> None:
     for p in promises:
         p.result()
 ```
+
 <!--SNIPEND-->
 
 The example above shows that you don't have to curate custom logic to manage batch sizes or to determine when to write the batches.
@@ -290,7 +305,9 @@ To demonstrate the efficiency we will do the following things.
 First, we will adjust our application to support the option to do sequential writes.
 
 <!--SNIPSTART examples-py-features-batching-benchmark-init {"selectedLines":["18-28", "52-53"] }-->
-[features/batching-benchmark/src/batching/__init__.py](https://github.com/resonatehq/examples-py/blob/main/features/batching-benchmark/src/batching/__init__.py)
+
+[features/batching-benchmark/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/main/features/batching-benchmark/src/batching/__init__.py)
+
 ```py
 # ...
 ### SEQUENTIAL INSERTS
@@ -308,13 +325,16 @@ def create_user_sequentially(ctx: Context, v: int):
 # Register the top level functions with the Resonate Scheduler
 resonate.register(create_user_sequentially, retry_policy=never())
 ```
+
 <!--SNIPEND-->
 
 Then we will update our application to expose a simple CLI for us to choose whether to process batch writes or sequential writes.
 We will also capture the start time and the end time of the operation.
 
 <!--SNIPSTART examples-py-features-batching-benchmark-init {"selectedLines":["8-9", "59-98"] }-->
-[features/batching-benchmark/src/batching/__init__.py](https://github.com/resonatehq/examples-py/blob/main/features/batching-benchmark/src/batching/__init__.py)
+
+[features/batching-benchmark/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/main/features/batching-benchmark/src/batching/__init__.py)
+
 ```py
 # ...
 import click
@@ -361,6 +381,7 @@ def cli(batch: bool, users: int):
 def main() -> None:
     cli()
 ```
+
 <!--SNIPEND-->
 
 :::tip Working code example
@@ -431,4 +452,4 @@ The Resonate SDK provides a way for developers to batch operations transparently
 The developer need only define a data structure and a handler function that processes the batch.
 Resonate will then automatically handle the batching and execution of the handler function.
 
-The batching operations that Resonate provides is more efficient in speed and resource usage which could reduce costs in comparison to non-batched operations.
+The batching operations that Resonate provides is more efficient in speed and resource usage in comparison to non-batched operations, which could reduce costs.
