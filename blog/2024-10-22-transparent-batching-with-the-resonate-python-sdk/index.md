@@ -45,10 +45,10 @@ If the application gets less than 1 new user per minute, or even every 30 second
 In other words, the application can run and commit one SQL query per new user and there may not ever be a problem.
 
 ```python
-def _create_user(value: int):
-    conn.execute("INSERT INTO users (value) VALUES (?)", (value,))
+def _create_user(user: int):
+    conn.execute("INSERT INTO users (value) VALUES (?)", (user,))
     conn.commit()
-    print(f"Value {value} has been inserted to database")
+    print(f"User {user} has been inserted to database")
 ```
 
 But what if the application received 1000 new users per second?
@@ -59,14 +59,14 @@ We can imagine that, if these user creation requests were synchronous, and comin
 In this very simplified example, we might now consider batching SQL queries so that more user rows are created per commit.
 
 ```python
-def _create_users_in_batch(values: list[int]):
-   first_value = values[0]
-   last_value = None
-   for value in values:
-       conn.execute("INSERT INTO users (value) VALUES (?)", (value,))
-       last_value = value
+def _create_users_in_batch(users: list[int]):
+   first_user = users[0]
+   last_user = None
+   for user in users:
+       conn.execute("INSERT INTO users (value) VALUES (?)", (user,))
+       last_value = user
    conn.commit()
-   print(f"Users from {first_value} to {last_value} have been inserted to database.")
+   print(f"Users from {first_user} to {last_user} have been inserted to database.")
 ```
 
 If we can batch thousands of queries into a single commit, then likely the application would be able to keep up with the demand.
@@ -90,84 +90,121 @@ The Resonate Python SDK gives you a handy set of APIs to manage the practical co
 
 If we assume that you are willing to embrace Resonate's programming mode, then at a high level, Resonate just requires that you define a data structure and a handler.
 
+:::tip Resonate batching vs Temporal batching
+
+When it comes to Durable Execution providers, Resonate's batching capability stands out.
+
+There is a big difference between the "batching" functionality that Temporal provides and the "transparent batching" that Resonate provides.
+
+With Temporal, a batching action is an operation that affects multiple Workflow Executions at the same time.
+It is not a feature that actually helps you affect efficiency with your business logic in quite the same way.
+Instead it is a feature that is only useful when you are locked into the platform and need to affect multiple Workflow Executions at the same time.
+
+Using the database example from above, with Temporal you wouldn't necessarily fear a process crash, but you would still need to manage the state of the batch and logic yourself.
+
+With Resonate you don't need to work on top of proprietary primitives, but instead you can get right to the heart of your application's needs.
+
+:::
+
 Let's look at how you would implement the use case above with Resonate.
 
 First, create a data structure that inherits what Resonate calls a Command interface.
 The data structure must include the data to be inserted into the database.
 
-```python
-from resonate.commands import Command
+<!--SNIPSTART examples-py-features-batching-init {"selectedLines":["1","6","16-19"]}-->
+
+[features/batching/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/main/features/batching/src/batching/__init__.py)
+
+```py
 from dataclasses import dataclass
-
-#...
-
+# ...
+from resonate.commands import Command
+# ...
+# Define a data structure for the Resonate SDK to track and create batches of
 @dataclass
 class InsertUser(Command):
-    value: int
+    id: int
 ```
+
+<!--SNIPEND-->
 
 Then, create a handler that can process a batch of SQL queries.
 This should look similar to the code that batched the SQL queries above.
 
-```python
+<!--SNIPSTART examples-py-features-batching-init {"selectedLines":["2", "21-30"]}-->
+
+[features/batching/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/main/features/batching/src/batching/__init__.py)
+
+```py
+# ...
 from resonate.context import Context
-
-#...
-
+# ...
 # Define a function that inserts a batch of rows into the database
-# Ensure that commit() is only called after all the Insert statements are executed
-def _batch_handler(ctx: Context, cmds: list[InsertUser]):
-    first_value = cmds[0].value
+# The main difference is that commit() is only called after all the Insert statements are executed
+def _batch_handler(_: Context, users: list[InsertUser]):
+    first_value = users[0].id
     last_value = None
-    for cmd in cmds:
-        conn.execute("INSERT INTO users (value) VALUES (?)", (cmd.value,))
-        last_value = cmd.value
+    for user in users:
+        conn.execute("INSERT INTO users (value) VALUES (?)", (user.id,))
+        last_value = user.id
     conn.commit()
     print(f"Values from {first_value} to {last_value} have been inserted to database.")
 ```
 
+<!--SNIPEND-->
+
 Next, register the data structure and the handler with the Resonate Scheduler.
 
-```python
-from resonate.storage import LocalPromiseStore
-from resonate.scheduler import Scheduler
-from resonate.retry_policy import never
+<!--SNIPSTART examples-py-features-batching-init {"selectedLines":["3-5","13-14", "40-41"]}-->
 
+[features/batching/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/main/features/batching/src/batching/__init__.py)
+
+```py
 # ...
-
-# Create a Resonate Scheduler with an in memory promise store
+from resonate.scheduler import Scheduler
+from resonate.storage import LocalPromiseStore
+from resonate.retry_policy import never
+# ...
+# Create a Resonate Scheduler with an in memore promise store
 resonate = Scheduler(LocalPromiseStore(), processor_threads=1)
-
-#...
-
+# ...
 # Register the batch handler and data structure with the Resonate Scheduler
 resonate.register_command_handler(InsertUser, _batch_handler, retry_policy=never())
 ```
 
+<!--SNIPEND-->
+
 Finally, create a top-level function that can be invoked over and over again and passes the data to Resonate to manage.
 Register it with the Resonate Scheduler, and then call that function with Resonate's `run()` method.
 
-```python
+<!--SNIPSTART examples-py-features-batching-init {"selectedLines":["32-35", "37-38","43", "50-58"]}-->
 
-# Definte the top level function that uses batching
-def create_user_batching(ctx: Context, v: int):
-    p = yield ctx.lfi(InsertUser(conn, v))
-    yield p
+[features/batching/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/main/features/batching/src/batching/__init__.py)
 
+```py
 # ...
-
-# Register the top level function with the Resonate Scheduler
+# Definte the top level function that uses batching
+def create_user_batching(ctx: Context, u: int):
+    p = yield ctx.lfi(InsertUser(u))
+    yield p
+# ...
+# Register the top level functions with the Resonate Scheduler
 resonate.register(create_user_batching, retry_policy=never())
+# ...
+def main() -> None:
+# ...
+    # Create an array to hold the promises
+    promises = []
 
-#...
-promises = []
-for i in range(10000):
-    p = resonate.run(f"insert-user-{i}", create_user_batching, i)
-    promises.append(p)
+    for u in range(10000):
+        p = resonate.run(f"insert-value-{u}", create_user_batching, u)
+        promises.append(p)
 
-for p in promises:
-    p.result()
+    for p in promises:
+        p.result()
 ```
+
+<!--SNIPEND-->
 
 :::tip Coroutines in action
 
@@ -178,42 +215,45 @@ You will see coroutines generically referred to as functions, but know that you 
 
 From top to bottom, taking into account database setup, a working application would look something like this:
 
-```python
+<!--SNIPSTART examples-py-features-batching-init-->
+
+[features/batching/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/main/features/batching/src/batching/__init__.py)
+
+```py
 from dataclasses import dataclass
 from resonate.context import Context
 from resonate.scheduler import Scheduler
 from resonate.storage import LocalPromiseStore
 from resonate.retry_policy import never
 from resonate.commands import Command
-from sqlite3 import Connection
 import sqlite3
 
 # Create an SQLite database if it doesn't exist
 # Create a connection with that database
 conn = sqlite3.connect("your_database.db", check_same_thread=False)
 
-# Create a Resonate Scheduler with an in memory promise store
+# Create a Resonate Scheduler with an in memore promise store
 resonate = Scheduler(LocalPromiseStore(), processor_threads=1)
 
 # Define a data structure for the Resonate SDK to track and create batches of
 @dataclass
 class InsertUser(Command):
-    value: int
+    id: int
 
 # Define a function that inserts a batch of rows into the database
 # The main difference is that commit() is only called after all the Insert statements are executed
-def _batch_handler(ctx: Context, cmds: list[InsertUser]):
-    first_value = cmds[0].value
+def _batch_handler(_: Context, users: list[InsertUser]):
+    first_value = users[0].id
     last_value = None
-    for cmd in cmds:
-        conn.execute("INSERT INTO users (value) VALUES (?)", (cmd.value,))
-        last_value = cmd.value
+    for user in users:
+        conn.execute("INSERT INTO users (value) VALUES (?)", (user.id,))
+        last_value = user.id
     conn.commit()
-    print(f"Users from {first_value} to {last_value} have been inserted to database.")
+    print(f"Values from {first_value} to {last_value} have been inserted to database.")
 
 # Definte the top level function that uses batching
-def create_user_batching(ctx: Context, v: int):
-    p = yield ctx.lfi(InsertUser(conn, v))
+def create_user_batching(ctx: Context, u: int):
+    p = yield ctx.lfi(InsertUser(u))
     yield p
 
 # Register the top level functions with the Resonate Scheduler
@@ -232,13 +272,15 @@ def main() -> None:
     # Create an array to hold the promises
     promises = []
 
-    for v in range(10000):
-        p = resonate.run(f"insert-user-{v}", create_user_batching, v)
+    for u in range(10000):
+        p = resonate.run(f"insert-value-{u}", create_user_batching, u)
         promises.append(p)
 
     for p in promises:
         p.result()
 ```
+
+<!--SNIPEND-->
 
 The example above shows that you don't have to curate custom logic to manage batch sizes or to determine when to write the batches.
 The SDK handles that for you.
@@ -250,7 +292,7 @@ resonate.register_command_handler(InsertUser, _batch_handler, maxlen=1000)
 
 :::tip Working code example
 
-You can find this working batching code example in Resonate's [examples-py respository](https://github.com/resonatehq/examples-py/batching).
+You can find this working batching code example in Resonate's [examples-py respository](https://github.com/resonatehq/examples-py/features/batching).
 
 :::
 
@@ -262,39 +304,47 @@ To demonstrate the efficiency we will do the following things.
 
 First, we will adjust our application to support the option to do sequential writes.
 
-```python
+<!--SNIPSTART examples-py-features-batching-benchmark-init {"selectedLines":["18-28", "52-53"] }-->
+
+[features/batching-benchmark/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/main/features/batching-benchmark/src/batching/__init__.py)
+
+```py
+# ...
 ### SEQUENTIAL INSERTS
 # Define a function that inserts a single row into the database
-def _create_user(_: Context, value: int):
+def _create_user(ctx: Context, value: int):
     conn.execute("INSERT INTO users (value) VALUES (?)", (value,))
     conn.commit()
-    print(f"Value {value} has been inserted to database")
+    print(f"User {value} has been inserted to database")
 
 # Define a top level function that uses sequential inserts
 def create_user_sequentially(ctx: Context, v: int):
     p = yield ctx.lfi(_create_user, v).with_options(retry_policy=never())
     yield p
-
 # ...
-
-# Register
+# Register the top level functions with the Resonate Scheduler
 resonate.register(create_user_sequentially, retry_policy=never())
 ```
+
+<!--SNIPEND-->
 
 Then we will update our application to expose a simple CLI for us to choose whether to process batch writes or sequential writes.
 We will also capture the start time and the end time of the operation.
 
-```python
+<!--SNIPSTART examples-py-features-batching-benchmark-init {"selectedLines":["8-9", "59-98"] }-->
+
+[features/batching-benchmark/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/main/features/batching-benchmark/src/batching/__init__.py)
+
+```py
+# ...
 import click
 import time
-
 # ...
-
 # Define a CLI to create an interaction point
 @click.command()
 @click.option("--batch/--no-batch", default=False)
-@click.option("--values", type=click.IntRange(0, 100_000))
-def cli(batch: bool, values: int):
+@click.option("--users", type=click.IntRange(0, 100_000))
+def cli(batch: bool, users: int):
     # To benchmark, we start from a clean slate each time
     # Drop the users table if it already exists
     conn.execute("DROP TABLE IF EXISTS users")
@@ -309,12 +359,12 @@ def cli(batch: bool, values: int):
     start_time = time.time_ns()
     # If batching, run the batch inserts
     if batch:
-        for v in range(values):
+        for v in range(users):
             p = resonate.run(f"insert-batch-user-{v}", create_user_batching, v)
             promises.append(p)
     # If not batching, run the sequential inserts
     else:
-        for v in range(values):
+        for v in range(users):
             p = resonate.run(f"insert-no-batch-user-{v}", create_user_sequentially, v)
             promises.append(p)
 
@@ -325,12 +375,14 @@ def cli(batch: bool, values: int):
     # Capture the ending time of the operation
     end_time = time.time_ns()
     print(
-        f"Inserting {values:,} users took {(end_time-start_time)/1e9:2f} seconds with batching={batch}"
+        f"Inserting {users:,} users took {(end_time-start_time)/1e9:2f} seconds with batching={batch}"
     )
 
 def main() -> None:
     cli()
 ```
+
+<!--SNIPEND-->
 
 :::tip Working code example
 
@@ -394,22 +446,10 @@ And under these conditions we can see that batching improves efficiency, both fo
 And it becomes more and more impactful at higher volumes.
 Try it out 50,000 or 100,000 inserts to see for yourself using the [batching-benchmark](https://github.com/resonatehq/examples-py/features/batching-benchmark) example in the examples-py repository.
 
-## Resonate batching vs Temporal batching
-
-When it comes to Durable Execution providers, Resonate's batching capability stands out.
-
-There is a big difference between the "batching" functionality that Temporal provides and the "transparent batching" that Resonate provides.
-
-With Temporal, a batching action is an operation that affects multiple Workflow Executions at the same time.
-It is not a feature that actually helps you affect efficiency with your business logic in quite the same way.
-Instead it is a feature that is only useful when you are locked into the platform and need to affect multiple Workflow Executions at the same time.
-
-Using the database example from above, with Temporal you wouldn't necessarily fear a process crash, but you would still need to manage the state of the batch and logic yourself.
-
-With Resonate you don't need to work on top of proprietary primitives, but instead you can get right to the heart of your application's needs.
-
 ## Conclusion
 
 The Resonate SDK provides a way for developers to batch operations transparently.
 The developer need only define a data structure and a handler function that processes the batch.
 Resonate will then automatically handle the batching and execution of the handler function.
+
+The batching operations that Resonate provides is more efficient in speed and resource usage which could reduce costs in comparison to non-batched operations.
