@@ -10,6 +10,12 @@ tags:
 
 The Resonate Python SDK is shaping up to provide developers with a delightful experience for building distributed applications.
 
+:::tip RSVP for the webinar
+
+[RSVP for the upcoming webinar](https://www.resonatehq.io/webinars) to learn more about the Python SDK!
+
+:::
+
 This post highlights one of the SDK’s features that might make you jump for joy.
 
 Let's talk about batching.
@@ -453,3 +459,6 @@ The developer need only define a data structure and a handler function that proc
 Resonate will then automatically handle the batching and execution of the handler function.
 
 The batching operations that Resonate provides is more efficient in speed and resource usage in comparison to non-batched operations, which could reduce costs.
+
+Want to learn more about the Python SDK?
+[Join the waitlist](https://forms.gle/BnFiDUQExseQcH8h9) or [RSVP for an upcoming webinar](https://www.resonatehq.io/webinars)!
