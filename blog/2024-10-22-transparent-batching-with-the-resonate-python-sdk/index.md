@@ -1,7 +1,7 @@
 ---
 slug: transparent-batching-with-the-resonate-python-sdk
 title: Transparent batching with the Resonate Python SDK
-authors: [flossypurse, tomas.alvarez]
+authors: [flossypurse, tomas.perez]
 tags:
   - python
   - resonate-sdk
@@ -60,13 +60,13 @@ In this very simplified example, we might now consider batching SQL queries so t
 
 ```python
 def _create_users_in_batch(values: list[int]):
-   first_value = list[0]
+   first_value = values[0]
    last_value = None
    for value in values:
-       conn.execute("INSERT INTO benchmark (value) VALUES (?)", (value,))
+       conn.execute("INSERT INTO users (value) VALUES (?)", (value,))
        last_value = value
    conn.commit()
-   print(f"Values from {first_value} to {last_value} have been inserted to database.")
+   print(f"Users from {first_value} to {last_value} have been inserted to database.")
 ```
 
 If we can batch thousands of queries into a single commit, then likely the application would be able to keep up with the demand.
@@ -102,8 +102,7 @@ from dataclasses import dataclass
 #...
 
 @dataclass
-class InsertValue(Command):
-    conn: Connection
+class InsertUser(Command):
     value: int
 ```
 
@@ -117,7 +116,7 @@ from resonate.context import Context
 
 # Define a function that inserts a batch of rows into the database
 # Ensure that commit() is only called after all the Insert statements are executed
-def _batch_handler(_: Context, cmds: list[InsertValue]):
+def _batch_handler(ctx: Context, cmds: list[InsertUser]):
     first_value = cmds[0].value
     last_value = None
     for cmd in cmds:
@@ -136,13 +135,13 @@ from resonate.retry_policy import never
 
 # ...
 
-# Create a Resonate Scheduler with an in memore promise store
+# Create a Resonate Scheduler with an in memory promise store
 resonate = Scheduler(LocalPromiseStore(), processor_threads=1)
 
 #...
 
 # Register the batch handler and data structure with the Resonate Scheduler
-resonate.register_command_handler(InsertValue, _batch_handler, retry_policy=never())
+resonate.register_command_handler(InsertUser, _batch_handler, retry_policy=never())
 ```
 
 Finally, create a top-level function that can be invoked over and over again and passes the data to Resonate to manage.
@@ -152,7 +151,7 @@ Register it with the Resonate Scheduler, and then call that function with Resona
 
 # Definte the top level function that uses batching
 def create_user_batching(ctx: Context, v: int):
-    p = yield ctx.lfi(InsertValue(conn, v))
+    p = yield ctx.lfi(InsertUser(conn, v))
     yield p
 
 # ...
@@ -163,7 +162,7 @@ resonate.register(create_user_batching, retry_policy=never())
 #...
 promises = []
 for i in range(10000):
-    p = resonate.run(f"insert-value-{i}", create_user_batching, i)
+    p = resonate.run(f"insert-user-{i}", create_user_batching, i)
     promises.append(p)
 
 for p in promises:
@@ -193,36 +192,35 @@ import sqlite3
 # Create a connection with that database
 conn = sqlite3.connect("your_database.db", check_same_thread=False)
 
-# Create a Resonate Scheduler with an in memore promise store
+# Create a Resonate Scheduler with an in memory promise store
 resonate = Scheduler(LocalPromiseStore(), processor_threads=1)
 
 # Define a data structure for the Resonate SDK to track and create batches of
 @dataclass
-class InsertValue(Command):
-    conn: Connection
+class InsertUser(Command):
     value: int
 
 # Define a function that inserts a batch of rows into the database
 # The main difference is that commit() is only called after all the Insert statements are executed
-def _batch_handler(_: Context, cmds: list[InsertValue]):
+def _batch_handler(ctx: Context, cmds: list[InsertUser]):
     first_value = cmds[0].value
     last_value = None
     for cmd in cmds:
         conn.execute("INSERT INTO users (value) VALUES (?)", (cmd.value,))
         last_value = cmd.value
     conn.commit()
-    print(f"Values from {first_value} to {last_value} have been inserted to database.")
+    print(f"Users from {first_value} to {last_value} have been inserted to database.")
 
 # Definte the top level function that uses batching
 def create_user_batching(ctx: Context, v: int):
-    p = yield ctx.lfi(InsertValue(conn, v))
+    p = yield ctx.lfi(InsertUser(conn, v))
     yield p
 
 # Register the top level functions with the Resonate Scheduler
 resonate.register(create_user_batching, retry_policy=never())
 
 # Register the batch handler and data structure with the Resonate Scheduler
-resonate.register_command_handler(InsertValue, _batch_handler, retry_policy=never())
+resonate.register_command_handler(InsertUser, _batch_handler, retry_policy=never())
 
 def main() -> None:
     # Drop the users table if it already exists
@@ -235,7 +233,7 @@ def main() -> None:
     promises = []
 
     for v in range(10000):
-        p = resonate.run(f"insert-value-{v}", create_user_batching, v)
+        p = resonate.run(f"insert-user-{v}", create_user_batching, v)
         promises.append(p)
 
     for p in promises:
@@ -247,7 +245,7 @@ The SDK handles that for you.
 In fact, if you want to ensure a maximum batch size, you need only supply that when registering the handler:
 
 ```python
-resonate.register_command_handler(InsertValue, _batch_handler, maxlen(1000))
+resonate.register_command_handler(InsertUser, _batch_handler, maxlen=1000)
 ```
 
 :::tip Working code example
@@ -312,12 +310,12 @@ def cli(batch: bool, values: int):
     # If batching, run the batch inserts
     if batch:
         for v in range(values):
-            p = resonate.run(f"insert-batch-value-{v}", create_user_batching, v)
+            p = resonate.run(f"insert-batch-user-{v}", create_user_batching, v)
             promises.append(p)
     # If not batching, run the sequential inserts
     else:
         for v in range(values):
-            p = resonate.run(f"insert-no-batch-value-{v}", create_user_sequentially, v)
+            p = resonate.run(f"insert-no-batch-user-{v}", create_user_sequentially, v)
             promises.append(p)
 
     # Yield all promises to ensure they are all complete
@@ -327,7 +325,7 @@ def cli(batch: bool, values: int):
     # Capture the ending time of the operation
     end_time = time.time_ns()
     print(
-        f"Inserting {values:,} values took {(end_time-start_time)/1e9:2f} seconds with batching={batch}"
+        f"Inserting {values:,} users took {(end_time-start_time)/1e9:2f} seconds with batching={batch}"
     )
 
 def main() -> None:
