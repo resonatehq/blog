@@ -199,3 +199,28 @@ h6 {
   color: white;
   text-decoration: none;
 }
+
+.waiting-list-announcement {
+  width: 100%;
+  background: linear-gradient(
+    to right,
+    #ec4899,
+    #ef4444,
+    #f59e0b
+  ); /* Pink to red to yellow gradient */
+  color: white;
+  text-align: center;
+  padding: 2rem 0 !important; /* Padding for top and bottom */
+  font-size: 1.3em;
+  font-weight: bold !important;
+  text-decoration: none;
+  color: white;
+}
+
+.cta-link {
+  text-decoration: none !important;
+}
+
+.cta-link:hover {
+  text-decoration: underline !important;
+}

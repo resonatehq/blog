@@ -108,6 +108,14 @@ const config: Config = {
       disableSwitch: true,
       respectPrefersColorScheme: false,
     },
+    announcementBar: {
+      id: "python-sdk-waiting-list",
+      content:
+        '<div class="waiting-list-announcement"><a class="cta-link" href="https://forms.gle/BnFiDUQExseQcH8h9" target="_blank" rel="noopener noreferrer">Join the Resonate Python SDK wait list!</a> 🚀</div>',
+      isCloseable: false,
+      backgroundColor: "#121212",
+      textColor: "#efefef",
+    },
     navbar: {
       title: "Resonate",
       logo: {
