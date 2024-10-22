@@ -10,7 +10,7 @@ tags:
   - batching
 ---
 
-![Batched muffins](/img/muffin-trimmed.png)
+![The Resonate SDK provides a way for developers to batch operations transparently](/img/muffin-trimmed.png)
 
 The Resonate Python SDK is shaping up to provide developers with a delightful experience for building distributed applications.
 
