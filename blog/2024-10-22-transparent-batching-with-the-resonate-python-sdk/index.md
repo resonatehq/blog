@@ -2,11 +2,14 @@
 slug: transparent-batching-with-the-resonate-python-sdk
 title: Transparent batching with the Resonate Python SDK
 authors: [flossypurse, tomas.perez]
+image: /img/muffin-trimmed.png
 tags:
   - python
   - resonate-sdk
   - batching
 ---
+
+![Batched muffins](/img/muffin-trimmed.png)
 
 The Resonate Python SDK is shaping up to provide developers with a delightful experience for building distributed applications.
 
@@ -30,8 +33,8 @@ Because performing operations in batches can be much more efficient than process
 
 When we talk about efficiency we could be talking about two different things:
 
-1. Speed
-2. Resource utilization
+1. **Speed**
+2. **Resource utilization**
 
 With speed, the benefit is clear - things happen faster and you are removing bottlenecks.
 
@@ -57,7 +60,8 @@ def _create_user(user: int):
     print(f"User {user} has been inserted to database")
 ```
 
-But what if the application received 1000 new users per second?
+But what if the applications suddenly becomes really popular?
+What if, hypothetically, it received 1000 new users per second? 🚀
 The database would save to durable storage on each query and the application probably wouldn't be able to keep up with all the demand.
 Each second there would be a longer and longer delay for users to get added to the database.
 We can imagine that, if these user creation requests were coming over a network, that many of them would timeout while waiting for their turn to get a row in the database.
@@ -66,13 +70,10 @@ In this very simplified example, we might now consider batching SQL queries so t
 
 ```python
 def _create_users_in_batch(users: list[int]):
-   first_user = users[0]
-   last_user = None
    for user in users:
        conn.execute("INSERT INTO users (value) VALUES (?)", (user,))
-       last_value = user
    conn.commit()
-   print(f"Users from {first_user} to {last_user} have been inserted to database.")
+   print(f"{len(users)} users have been inserted to database.")
 ```
 
 If we can batch thousands of queries into a single commit, then likely the application would be able to keep up with the demand.
@@ -84,7 +85,7 @@ In production, ensure that inserts are idempotent to account for the possibility
 :::
 
 In theory that sounds great.
-In practice, now you have to manage the complexity of determining appropriate batch sizes and when to process the batches.
+In practice, now you have to manage the complexity of coordinating otherwise concurrent executions to collect a batch.
 
 Sounds like a trade off of on complexity vs developer experience right?
 
@@ -96,30 +97,15 @@ The Resonate Python SDK gives you a handy set of APIs to manage the practical co
 
 If we assume that you are willing to embrace Resonate's programming mode, then at a high level, Resonate just requires that you define a data structure and a handler.
 
-:::tip Resonate batching vs Temporal batching
-
-When it comes to Durable Execution providers, Resonate's batching capability stands out.
-
-There is a big difference between the "batching" functionality that Temporal provides and the "transparent batching" that Resonate provides.
-
-With Temporal, a batching action is an operation that affects multiple Workflow Executions at the same time.
-It is not a feature that actually helps you affect efficiency with your business logic in quite the same way.
-Instead it is a feature that is only useful when you are locked into the platform and need to affect multiple Workflow Executions at the same time.
-
-Using the database example from above, with Temporal you wouldn't necessarily fear a process crash, but you would still need to manage the state of the batch and logic yourself.
-
-With Resonate you don't need to work on top of proprietary primitives, but instead you can get right to the heart of your application's needs.
-
-:::
-
 Let's look at how you would implement the use case above with Resonate.
 
 First, create a data structure that inherits what Resonate calls a Command interface.
 The data structure must include the data to be inserted into the database.
+The Command data structure stands in for a function execution invocation so that you still get a promise and await on result of the commit.
 
 <!--SNIPSTART examples-py-features-batching-init {"selectedLines":["1","6","16-19"]}-->
 
-[features/batching/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/main/features/batching/src/batching/__init__.py)
+[features/batching/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/branching-updates/features/batching/src/batching/__init__.py)
 
 ```py
 from dataclasses import dataclass
@@ -137,9 +123,9 @@ class InsertUser(Command):
 Then, create a handler that can process a batch of SQL queries.
 This should look similar to the code that batched the SQL queries above.
 
-<!--SNIPSTART examples-py-features-batching-init {"selectedLines":["2", "21-30"]}-->
+<!--SNIPSTART examples-py-features-batching-init {"selectedLines":["2", "21-28"]}-->
 
-[features/batching/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/main/features/batching/src/batching/__init__.py)
+[features/batching/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/branching-updates/features/batching/src/batching/__init__.py)
 
 ```py
 # ...
@@ -148,22 +134,20 @@ from resonate.context import Context
 # Define a function that inserts a batch of rows into the database
 # The main difference is that commit() is only called after all the Insert statements are executed
 def _batch_handler(_: Context, users: list[InsertUser]):
-    first_value = users[0].id
-    last_value = None
+    # error handling ommitted for this example
     for user in users:
         conn.execute("INSERT INTO users (value) VALUES (?)", (user.id,))
-        last_value = user.id
     conn.commit()
-    print(f"Values from {first_value} to {last_value} have been inserted to database.")
+    print(f"{len(users)} users have been inserted to database.")
 ```
 
 <!--SNIPEND-->
 
 Next, register the data structure and the handler with the Resonate Scheduler.
 
-<!--SNIPSTART examples-py-features-batching-init {"selectedLines":["3-5","13-14", "40-41"]}-->
+<!--SNIPSTART examples-py-features-batching-init {"selectedLines":["3-5","13-14", "38-39"]}-->
 
-[features/batching/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/main/features/batching/src/batching/__init__.py)
+[features/batching/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/branching-updates/features/batching/src/batching/__init__.py)
 
 ```py
 # ...
@@ -183,9 +167,9 @@ resonate.register_command_handler(InsertUser, _batch_handler, retry_policy=never
 Finally, create a function that can be invoked over and over again and passes the data to Resonate to manage.
 Register it with the Resonate Scheduler, and then call that function with Resonate's `run()` method.
 
-<!--SNIPSTART examples-py-features-batching-init {"selectedLines":["32-35", "37-38","43", "50-58"]}-->
+<!--SNIPSTART examples-py-features-batching-init {"selectedLines":["30-33", "35-36","41", "48-56"]}-->
 
-[features/batching/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/main/features/batching/src/batching/__init__.py)
+[features/batching/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/branching-updates/features/batching/src/batching/__init__.py)
 
 ```py
 # ...
@@ -223,7 +207,7 @@ From top to bottom, taking into account database setup, a working application wo
 
 <!--SNIPSTART examples-py-features-batching-init-->
 
-[features/batching/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/main/features/batching/src/batching/__init__.py)
+[features/batching/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/branching-updates/features/batching/src/batching/__init__.py)
 
 ```py
 from dataclasses import dataclass
@@ -249,13 +233,11 @@ class InsertUser(Command):
 # Define a function that inserts a batch of rows into the database
 # The main difference is that commit() is only called after all the Insert statements are executed
 def _batch_handler(_: Context, users: list[InsertUser]):
-    first_value = users[0].id
-    last_value = None
+    # error handling ommitted for this example
     for user in users:
         conn.execute("INSERT INTO users (value) VALUES (?)", (user.id,))
-        last_value = user.id
     conn.commit()
-    print(f"Values from {first_value} to {last_value} have been inserted to database.")
+    print(f"{len(users)} users have been inserted to database.")
 
 # Definte the top level function that uses batching
 def create_user_batching(ctx: Context, u: int):
@@ -288,17 +270,16 @@ def main() -> None:
 
 <!--SNIPEND-->
 
-The example above shows that you don't have to curate custom logic to manage batch sizes or to determine when to write the batches.
-The SDK handles that for you.
-In fact, if you want to ensure a maximum batch size, you need only supply that when registering the handler:
+The example above shows that batching happens transparently in the background.
+The SDK handles the coordination of otherwise concurrent executions on a platform level and you still get to write concurrent, non-coordinated code.
+
+:::tip Configure batch size
+
+If you want to ensure a maximum batch size, you need only supply that when registering the handler:
 
 ```python
 resonate.register_command_handler(InsertUser, _batch_handler, maxlen=1000)
 ```
-
-:::tip Working code example
-
-You can find this working batching code example in Resonate's [examples-py respository](https://github.com/resonatehq/examples-py/features/batching).
 
 :::
 
@@ -310,9 +291,9 @@ To demonstrate the efficiency we will do the following things.
 
 First, we will adjust our application to support the option to do sequential writes.
 
-<!--SNIPSTART examples-py-features-batching-benchmark-init {"selectedLines":["18-28", "52-53"] }-->
+<!--SNIPSTART examples-py-features-batching-benchmark-init {"selectedLines":["18-28", "50-51"] }-->
 
-[features/batching-benchmark/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/main/features/batching-benchmark/src/batching/__init__.py)
+[features/batching-benchmark/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/branching-updates/features/batching-benchmark/src/batching/__init__.py)
 
 ```py
 # ...
@@ -337,9 +318,9 @@ resonate.register(create_user_sequentially, retry_policy=never())
 Then we will update our application to expose a simple CLI for us to choose whether to process batch writes or sequential writes.
 We will also capture the start time and the end time of the operation.
 
-<!--SNIPSTART examples-py-features-batching-benchmark-init {"selectedLines":["8-9", "59-98"] }-->
+<!--SNIPSTART examples-py-features-batching-benchmark-init {"selectedLines":["8-9", "57-96"] }-->
 
-[features/batching-benchmark/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/main/features/batching-benchmark/src/batching/__init__.py)
+[features/batching-benchmark/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/branching-updates/features/batching-benchmark/src/batching/__init__.py)
 
 ```py
 # ...
@@ -389,12 +370,6 @@ def main() -> None:
 ```
 
 <!--SNIPEND-->
-
-:::tip Working code example
-
-You can see and try out the complete example application in the [examples-py repository](https://github.com/resonatehq/examples-py/features/batching-benchmark)
-
-:::
 
 Let's run this with 10,000 sequential user inserts.
 
@@ -447,8 +422,7 @@ And it took less than a second to complete.
 Inserting 10,000 values took 0.733565 seconds with batching=True
 ```
 
-In this example we are ignoring network requests, choosing not to worry about durability, and focusing specifically on the bottleneck of sequential writes to the database.
-And under these conditions we can see that batching improves efficiency, both for resource utilization (less inserts to the database).
+In this example we can see that batching improves efficiency, both for resource utilization (less inserts to the database).
 And it becomes more and more impactful at higher volumes.
 Try it out 50,000 or 100,000 inserts to see for yourself using the [batching-benchmark](https://github.com/resonatehq/examples-py/features/batching-benchmark) example in the examples-py repository.
 

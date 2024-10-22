@@ -1,7 +1,7 @@
 origins:
   - owner: resonatehq
     repo: examples-py
-    ref: main
+    ref: branching-updates
 
 targets:
   - blog/2024-10-22-transparent-batching-with-the-resonate-python-sdk
