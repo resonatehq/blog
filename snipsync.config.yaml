@@ -1,0 +1,10 @@
+origins:
+  - owner: resonatehq
+    repo: examples-py
+    ref: main
+
+targets:
+  - blog/2024-10-22-transparent-batching-with-the-resonate-python-sdk
+
+allowed_target_extensions: [.md]
+enable_code_dedenting: false
