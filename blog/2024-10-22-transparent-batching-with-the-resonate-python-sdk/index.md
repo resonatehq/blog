@@ -104,9 +104,7 @@ The data structure must include the data to be inserted into the database.
 The Command data structure stands in for a function execution invocation so that you still get a promise and await on result of the commit.
 
 <!--SNIPSTART examples-py-features-batching-init {"selectedLines":["1","6","16-19"]}-->
-
-[features/batching/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/branching-updates/features/batching/src/batching/__init__.py)
-
+[features/batching/src/batching/__init__.py](https://github.com/resonatehq/examples-py/blob/main/features/batching/src/batching/__init__.py)
 ```py
 from dataclasses import dataclass
 # ...
@@ -117,16 +115,13 @@ from resonate.commands import Command
 class InsertUser(Command):
     id: int
 ```
-
 <!--SNIPEND-->
 
 Then, create a handler that can process a batch of SQL queries.
 This should look similar to the code that batched the SQL queries above.
 
 <!--SNIPSTART examples-py-features-batching-init {"selectedLines":["2", "21-28"]}-->
-
-[features/batching/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/branching-updates/features/batching/src/batching/__init__.py)
-
+[features/batching/src/batching/__init__.py](https://github.com/resonatehq/examples-py/blob/main/features/batching/src/batching/__init__.py)
 ```py
 # ...
 from resonate.context import Context
@@ -140,37 +135,31 @@ def _batch_handler(_: Context, users: list[InsertUser]):
     conn.commit()
     print(f"{len(users)} users have been inserted to database.")
 ```
-
 <!--SNIPEND-->
 
 Next, register the data structure and the handler with the Resonate Scheduler.
 
 <!--SNIPSTART examples-py-features-batching-init {"selectedLines":["3-5","13-14", "38-39"]}-->
-
-[features/batching/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/branching-updates/features/batching/src/batching/__init__.py)
-
+[features/batching/src/batching/__init__.py](https://github.com/resonatehq/examples-py/blob/main/features/batching/src/batching/__init__.py)
 ```py
 # ...
 from resonate.scheduler import Scheduler
 from resonate.storage import LocalPromiseStore
 from resonate.retry_policy import never
 # ...
-# Create a Resonate Scheduler with an in memore promise store
+# Create a Resonate Scheduler with an in memory promise store
 resonate = Scheduler(LocalPromiseStore(), processor_threads=1)
 # ...
 # Register the batch handler and data structure with the Resonate Scheduler
 resonate.register_command_handler(InsertUser, _batch_handler, retry_policy=never())
 ```
-
 <!--SNIPEND-->
 
 Finally, create a function that can be invoked over and over again and passes the data to Resonate to manage.
 Register it with the Resonate Scheduler, and then call that function with Resonate's `run()` method.
 
 <!--SNIPSTART examples-py-features-batching-init {"selectedLines":["30-33", "35-36","41", "48-56"]}-->
-
-[features/batching/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/branching-updates/features/batching/src/batching/__init__.py)
-
+[features/batching/src/batching/__init__.py](https://github.com/resonatehq/examples-py/blob/main/features/batching/src/batching/__init__.py)
 ```py
 # ...
 # Definte the top level function that uses batching
@@ -193,7 +182,6 @@ def main() -> None:
     for p in promises:
         p.result()
 ```
-
 <!--SNIPEND-->
 
 :::tip Coroutines in action
@@ -206,9 +194,7 @@ You will see coroutines generically referred to as functions, but know that you 
 From top to bottom, taking into account database setup, a working application would look something like this:
 
 <!--SNIPSTART examples-py-features-batching-init-->
-
-[features/batching/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/branching-updates/features/batching/src/batching/__init__.py)
-
+[features/batching/src/batching/__init__.py](https://github.com/resonatehq/examples-py/blob/main/features/batching/src/batching/__init__.py)
 ```py
 from dataclasses import dataclass
 from resonate.context import Context
@@ -222,7 +208,7 @@ import sqlite3
 # Create a connection with that database
 conn = sqlite3.connect("your_database.db", check_same_thread=False)
 
-# Create a Resonate Scheduler with an in memore promise store
+# Create a Resonate Scheduler with an in memory promise store
 resonate = Scheduler(LocalPromiseStore(), processor_threads=1)
 
 # Define a data structure for the Resonate SDK to track and create batches of
@@ -267,7 +253,6 @@ def main() -> None:
     for p in promises:
         p.result()
 ```
-
 <!--SNIPEND-->
 
 The example above shows that batching happens transparently in the background.
@@ -292,9 +277,7 @@ To demonstrate the efficiency we will do the following things.
 First, we will adjust our application to support the option to do sequential writes.
 
 <!--SNIPSTART examples-py-features-batching-benchmark-init {"selectedLines":["18-28", "50-51"] }-->
-
-[features/batching-benchmark/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/branching-updates/features/batching-benchmark/src/batching/__init__.py)
-
+[features/batching-benchmark/src/batching/__init__.py](https://github.com/resonatehq/examples-py/blob/main/features/batching-benchmark/src/batching/__init__.py)
 ```py
 # ...
 ### SEQUENTIAL INSERTS
@@ -312,16 +295,13 @@ def create_user_sequentially(ctx: Context, v: int):
 # Register the top level functions with the Resonate Scheduler
 resonate.register(create_user_sequentially, retry_policy=never())
 ```
-
 <!--SNIPEND-->
 
 Then we will update our application to expose a simple CLI for us to choose whether to process batch writes or sequential writes.
 We will also capture the start time and the end time of the operation.
 
 <!--SNIPSTART examples-py-features-batching-benchmark-init {"selectedLines":["8-9", "57-96"] }-->
-
-[features/batching-benchmark/src/batching/**init**.py](https://github.com/resonatehq/examples-py/blob/branching-updates/features/batching-benchmark/src/batching/__init__.py)
-
+[features/batching-benchmark/src/batching/__init__.py](https://github.com/resonatehq/examples-py/blob/main/features/batching-benchmark/src/batching/__init__.py)
 ```py
 # ...
 import click
@@ -368,7 +348,6 @@ def cli(batch: bool, users: int):
 def main() -> None:
     cli()
 ```
-
 <!--SNIPEND-->
 
 Let's run this with 10,000 sequential user inserts.
