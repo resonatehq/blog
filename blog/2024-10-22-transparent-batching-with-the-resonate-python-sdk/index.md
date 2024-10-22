@@ -41,7 +41,7 @@ If a resource is remote and accessed over a network, you may be charged every ti
 
 This level of efficiency might not be significant at smaller scales, but at larger scales, efficiency becomes crucial.
 
-For example, processing 100,000 operations sequentially can be far more costly and time-consuming than batching those 100,000 operations into a single task. Of course, the operations must be similar and the resources being used need a way to group the operations together.
+For example, processing 100,000 operations sequentially can be far more costly and time-consuming than batching those 100,000 operations into a single task. Of course, the target system must support batching.
 
 So let's focus on a concrete example.
 
@@ -58,9 +58,9 @@ def _create_user(user: int):
 ```
 
 But what if the application received 1000 new users per second?
-The database would lock on each query and the application probably wouldn't be able to keep up with all the demand.
+The database would save to durable storage on each query and the application probably wouldn't be able to keep up with all the demand.
 Each second there would be a longer and longer delay for users to get added to the database.
-We can imagine that, if these user creation requests were synchronous, and coming over a network, that many of them would timeout while waiting for their turn to get a row in the database.
+We can imagine that, if these user creation requests were coming over a network, that many of them would timeout while waiting for their turn to get a row in the database.
 
 In this very simplified example, we might now consider batching SQL queries so that more user rows are created per commit.
 
@@ -77,9 +77,9 @@ def _create_users_in_batch(users: list[int]):
 
 If we can batch thousands of queries into a single commit, then likely the application would be able to keep up with the demand.
 
-:::tip Do not use in production
+:::tip In Production
 
-In production, you would want to ensure that the new user writes are idempotent and either check to see if the row exists already or update if already does exist.
+In production, ensure that inserts are idempotent to account for the possibility of retries.
 
 :::
 
@@ -180,7 +180,7 @@ resonate.register_command_handler(InsertUser, _batch_handler, retry_policy=never
 
 <!--SNIPEND-->
 
-Finally, create a top-level function that can be invoked over and over again and passes the data to Resonate to manage.
+Finally, create a function that can be invoked over and over again and passes the data to Resonate to manage.
 Register it with the Resonate Scheduler, and then call that function with Resonate's `run()` method.
 
 <!--SNIPSTART examples-py-features-batching-init {"selectedLines":["32-35", "37-38","43", "50-58"]}-->
