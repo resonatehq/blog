@@ -139,7 +139,7 @@ const config: Config = {
           target: "_self",
         },
         {
-          to: "https://blog.resonatehq.io",
+          to: "https://resonatehq.io/subscribe",
           label: "Subscribe",
           position: "right",
           target: "_self",
