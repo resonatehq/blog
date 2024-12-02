@@ -194,12 +194,6 @@ h6 {
   transition: background 0.3s ease; /* Smooth transition for hover */
 }
 
-.subscribe-button:hover {
-  background: #292929;
-  color: white;
-  text-decoration: none;
-}
-
 .waiting-list-announcement {
   width: 100%;
   position: relative;
