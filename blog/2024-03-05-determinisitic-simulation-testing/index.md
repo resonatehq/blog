@@ -2,7 +2,7 @@
 slug: deterministic-simulation-testing
 title: Deterministic Simulation Testing
 authors: [dtornow]
-tags: []
+tags: [dst]
 image: ./img/dst.png
 ---
 
@@ -65,7 +65,7 @@ In essence a determinisitc system is a system without choice.
 An external trace or trace is a projection of a complete trace containing only external events where the deliniation of internal and external events is user supplied.
 
 ```
-trace = ⟨e₁, e₂, e₃, eₙ⟩, with eᵢ ∈ External 
+trace = ⟨e₁, e₂, e₃, eₙ⟩, with eᵢ ∈ External
 ```
 
 The function traces maps a System S and the Initial State σ under the evaluation rules of a Runtime R to the set of all possible external traces.
