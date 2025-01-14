@@ -11,6 +11,8 @@ At Resonate HQ, we are building a novel programming model, **Distributed Async A
 
 So in this blog post, we will address the question "What is a programming model?"
 
+<!-- truncate -->
+
 ## Programming Model
 
 **A programming model or programming paradigm is a conceptual framework that guides and constrains how we think about problems and their solutions.**
@@ -22,7 +24,7 @@ When choosing an object oriented programming language, this framework is the len
 
 ## Beyond Programming Languages
 
-However, a programming model is not only defined by a programming language but by the totality of the environment. Libraries, frameworks, and platforms have the ability to change the set of concepts, relationships, and contstraints. 
+However, a programming model is not only defined by a programming language but by the totality of the environment. Libraries, frameworks, and platforms have the ability to change the set of concepts, relationships, and contstraints.
 
 For example, even when writing object oriented programs, your programs change significantly when you add threads. Your programs do not stop being object oriented programs, but they start to become concurrent programs, a change that forces you to think about problems and solutions differently than before.
 

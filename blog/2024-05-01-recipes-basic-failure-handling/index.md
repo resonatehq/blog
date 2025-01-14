@@ -2,14 +2,18 @@
 slug: recipes-basic-failure-handling
 title: "Resonate Recipes: Basic Failure Handling"
 authors: [dfarr]
-tags: [recipes]
+tags:
+  - recipes
+  - error-handling
 ---
 
-In this edition of Resonate Recipes we will explore catchable and non-catchable failure and how Resonate mitigates these failure types. 
+In this edition of Resonate Recipes we will explore catchable and non-catchable failure and how Resonate mitigates these failure types.
 
 :::info
 To follow along, head over to the Resonate Recipes [repository on GitHub](https://github.com/resonatehq/recipes), clone the repository, and navigate to the [Basic Failure Handling](https://github.com/resonatehq/recipes/tree/main/basic-failure-handling) recipe.
 :::
+
+<!-- truncate -->
 
 ## Catchable and Non-catchable Failure
 
@@ -17,12 +21,11 @@ import Tweet from '@site/src/components/Twitter';
 
 <Tweet id="1784628736056521120"></Tweet>
 
-In distributed systems, we have to distinguish between catchable failure and non-catchable failure. 
+In distributed systems, we have to distinguish between catchable failure and non-catchable failure.
 
-- **Catchable failures** refer to the set of failures that can be detected and mitigated by a process itself e.g. in a try catch block. Examples include  io failure such as a file not found exception or networking failure such as a request timeout exception.
+- **Catchable failures** refer to the set of failures that can be detected and mitigated by a process itself e.g. in a try catch block. Examples include io failure such as a file not found exception or networking failure such as a request timeout exception.
 
 - **Non-catchable failures** refer to the set of failures that cannot be detected and mitigated by a process. My favourite mental model is to imagine the plug being pulled on the machine running a process.
-
 
 ### Recovering from catchable failure
 
@@ -46,9 +49,13 @@ resonate.register("foo", async () => {
   console.log("success!");
 });
 
-resonate.run("foo", "foo.1", resonate.options({
-  retry: Retry.exponential()
-}));
+resonate.run(
+  "foo",
+  "foo.1",
+  resonate.options({
+    retry: Retry.exponential(),
+  })
+);
 ```
 
 Running this function directly would, on average, fail 50% of the time. But executing via Resonate (almost) always succeeds. Why is this?
@@ -99,8 +106,8 @@ resonate.register("foo", () => {
     console.log("!!! ERROR !!!");
     process.exit(1);
   }
-  
-  console.log("success!")
+
+  console.log("success!");
 });
 
 // start resonate
@@ -133,6 +140,7 @@ When Resonate is started with a call to `resonate.start()` a background process 
 ## Key Takeaways
 
 In this inaugural edition of Resonate Recipes we have seen that:
+
 - Resonate mitigates **catchable failures** through retries.
 - Resonate mitigates **non-catchable failures** by restarting executions.
 - Resonate uses **Durable Promises** to implement failure mitigation (and much more).

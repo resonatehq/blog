@@ -10,6 +10,8 @@ At Resonate, we consider deterministic simulation testing (DST) to be a cornerst
 
 In this post, we’ll demystify DST by constructing an accurate yet concise mental model. We will explore the theoretical foundations as well as practical applications—and why I believe DST will soon become indispensable for developing distributed systems.
 
+<!-- truncate -->
+
 ## The Challenge
 
 The task of testing concurrent and distributed systems presents formidable challenges: concurrency introduces non-determinism manifested through unpredictable execution order while distribution introduces non-determinism manifested through unpredictable partial failures, creating a vast behavior space to consider.
@@ -24,7 +26,7 @@ Concurrency results in non-determinism in the form of random execution order: Th
 P | Q = { ⟨a, b, c, d⟩, ⟨a, c, b, d⟩, ... ⟨c, d, a, b⟩ }
 ```
 
-Distribution results in non-determinism in the form of random partial failures: adverse events like crashes or network partitions further complicate  interleavings:
+Distribution results in non-determinism in the form of random partial failures: adverse events like crashes or network partitions further complicate interleavings:
 
 ```
 P | Q | 💀
@@ -93,7 +95,6 @@ A system is non-deterministic if there exists an Initial State σ such that the 
 With the theoretical foundations in place, let's explore a practical application. Consider the following GoLang example, which sums up the values in a key-value map. For this illustration, we'll define the trace of the execution as the lines printed to standard output, where the events are labeled as `i:number`, `v:number`, and `s:number`.
 
 GoLang does not specify an iteration order for key-value maps, in fact, golang explicitly randomizes the iteration order so software engineers don't implicitly rely on an unspecified order. Two different executions of the program may produce different traces.
-
 
 ```go
 package main

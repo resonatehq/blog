@@ -13,6 +13,8 @@ Every now and then, a blog post pops up in which the author details their journe
 
 In this post, we'll explore the unseen challenges of custom queueing subsystems, and why they might not be the best choice for your application.
 
+<!-- truncate -->
+
 # Custom queueing subsystems
 
 Choosing a technology that insists on implementing its queuing subsystem is a decision with significant considerations. As the tech landscape explodes with solutions claiming to offer the best in terms of scalability and reliability, we should explore the consequences when a technology brings its own queuing subsystem to the table.
@@ -21,7 +23,7 @@ Choosing a technology that insists on implementing its queuing subsystem is a de
 
 Let's acknowledge － but put aside for a moment － that implementing a correct, scalable, and reliable queueing subsystem is a formidable engineering challenge. Unless the vendor has significant experience in building queueing subsystems, their custom queue is at risk to fall short of expectations.
 
-At first glance, the integration of a custom queuing subsystem within a technology stack might appear as a promise that the technology is uniquely engineered to address specific challenges. But does this argument really hold up under scrutiny? 
+At first glance, the integration of a custom queuing subsystem within a technology stack might appear as a promise that the technology is uniquely engineered to address specific challenges. But does this argument really hold up under scrutiny?
 
 During Prime Day 2023, AWS SQS processed 86 million messages per second. Today, AWS EventBridge matches more than 2.6 trillion events per month for over 1.5 million customers with diverse use cases. In light of these figures, a vendor's claim that their unique requirements necessitate a proprietary queuing subsystem deserve a healthy dose of skepticism.
 
@@ -39,9 +41,9 @@ By insisting on their own proprietary queues, vendors shut the door on your appl
 
 # The vendor wolf in sheep's clothing
 
-Forcing a user to commit to a proprietary queue serves as a "wolf in sheep's clothing", subtly promoting vendor lock-in. Opting for a proprietary queue ties a significant portion of your system to a single provider, effectively restricting future options. Such exclusivity forces you to  stake your success on the provider's technology.
+Forcing a user to commit to a proprietary queue serves as a "wolf in sheep's clothing", subtly promoting vendor lock-in. Opting for a proprietary queue ties a significant portion of your system to a single provider, effectively restricting future options. Such exclusivity forces you to stake your success on the provider's technology.
 
-When considering queuing solutions, the broader implications of vendor lock-in, and the benefits of a versatile, open architecture should guide your decision-making process. 
+When considering queuing solutions, the broader implications of vendor lock-in, and the benefits of a versatile, open architecture should guide your decision-making process.
 
 # The out-of-the-box argument
 
@@ -57,6 +59,6 @@ Implementing a custom queueing subsystem need not exclude the embrace of establi
 
 When evaluating a technology stack, consider carefully whether the technology mandates the use of its custom queueing subsystem. A balanced and flexible approach is one where the technology offers an out-of-the-box experience with its own queueing system but also supports seamless integration with alternative queueing providers.
 
-But a technology that enforces the use of its own queue, denying you the freedom to choose, should be viewed with caution 
+But a technology that enforces the use of its own queue, denying you the freedom to choose, should be viewed with caution
 
 🚩

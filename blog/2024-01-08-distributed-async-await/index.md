@@ -11,6 +11,8 @@ Why? Traditional programming models were not designed for the unique challenges 
 
 Resonate's programming model, **Distributed Async Await**, extends the widely popular async await programming model and goes beyond the boundaries of a single process, making distributed computing a first-class citizen.
 
+<!-- truncate -->
+
 ## Design Principles
 
 Resonate's vision is to provide a programming model for distributed applications that not only meets technical demands but provides a delightful developer experience. After all, who doesn't want to be delighted?
@@ -35,6 +37,6 @@ Based on these principles, we designed Distributed Async Await to be an extensio
 
 Like traditional async await, Distributed Async Await is built on the concept of functions and promises, the universal abstractions to express concurrency, coordination, and integration. Distributed Async Await elevates the traditional paradigm beyond the boundaries of a single process, making distributed computing a first-class citizen
 
-By extending instead of replacing async await, we've created an incremental transition from the world of concurrent programming into the world of distributed programming. You don't have to *rewire your brain*, instead you can build on your knowledge and experience to *extend your horizon*.
+By extending instead of replacing async await, we've created an incremental transition from the world of concurrent programming into the world of distributed programming. You don't have to _rewire your brain_, instead you can build on your knowledge and experience to _extend your horizon_.
 
 🏴‍☠️
