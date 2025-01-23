@@ -7,6 +7,8 @@ tags: []
 
 As open source software becomes critical infrastructure powering our online lives, ensuring correctness and reliability is crucial. In this post, I'll explain how formal modeling languages like [P](https://p-org.github.io/P/whatisP/) can help open source projects design distributed systems that work reliably at scale.
 
+<!-- truncate -->
+
 ## What and Why Formal Methods?
 
 Formal modeling is a technique that uses mathematically-based languages to define and verify software systems. The primary goal of formal modeling is to help developers clearly specify the expected behavior of a system before writing any code. This approach offers several key advantages:

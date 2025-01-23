@@ -2,12 +2,17 @@
 slug: invocation-handle-in-resonate
 title: Invocation Handle in Resonate
 authors: [avillegas]
-tags: []
+tags:
+  - typescript
+  - javascript
+  - resonate-sdk
 ---
 
 # InvocationHandle in Resonate
 
 The latest version of the Resonate SDK significantly changes its architecture: The new architecture is simpler and removes the use of a ResonatePromise, instead opting for the standard JS Promise. But what problems are we trying to solve with the new architecture, and which new patterns does it enable?
+
+<!-- truncate -->
 
 ## Motivation
 
@@ -69,26 +74,25 @@ This pseudocode is the essence of invokeLocal, and I'd argue it's the essence of
 The usage of the InvocationHandle will look something like this:
 
 ```tsx
-resonate.register('foo', async (ctx: Context) => {
+resonate.register("foo", async (ctx: Context) => {
   const handle = await ctx.invokeLocal(async (ctx: Context) => {
-    await setTimeout(1000)
-    console.log("World")
-  }, options({retryPolicy: never()}))
+    await setTimeout(1000);
+    console.log("World");
+  }, options({ retryPolicy: never() }));
 
-  console.log("Hello")
+  console.log("Hello");
 
   let durablePromise = resonate.store.promises.get(handle.invocationId);
-  console.log(durablePromise.state) // prints: PENDING
+  console.log(durablePromise.state); // prints: PENDING
 
   await handle.result();
 
   durablePromise = resonate.store.promises.get(handle.invocationId);
-  console.log(durablePromise.state) // prints: RESOLVED
-})
+  console.log(durablePromise.state); // prints: RESOLVED
+});
 
-const topHandle = await resonate.invokeLocal("foo", "foo.0")
-await topHandle.result()
-
+const topHandle = await resonate.invokeLocal("foo", "foo.0");
+await topHandle.result();
 ```
 
 When the user gets hold of an InvocationHandle, it's guaranteed that we have created a `DurablePromise` and started executing the user function. Once the user awaits the `result()` promise, we guarantee to run the user function to completion in the absence of unrecoverable errors.
@@ -103,6 +107,6 @@ This new approach offers:
 
 1. Clearer control flow
 2. Explicit durability guarantees
-3. Simpler implementation 
+3. Simpler implementation
 
 We encourage developers to explore the new SDK and leverage these improved patterns in their applications. Your feedback and innovative use cases will be crucial as we continue to evolve Resonate.

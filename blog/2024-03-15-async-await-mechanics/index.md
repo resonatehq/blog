@@ -5,9 +5,11 @@ authors: [dtornow]
 tags: []
 ---
 
-Resonate is pioneering a novel programming model to distributed computing called Distributed Async Await. Distributed Async Await is an extension of traditional async await that goes beyond the boundaries of a single process and makes distributed computing a first-class citizen. 
+Resonate is pioneering a novel programming model to distributed computing called Distributed Async Await. Distributed Async Await is an extension of traditional async await that goes beyond the boundaries of a single process and makes distributed computing a first-class citizen.
 
 Given that Distributed Async Await is an extension of async await, I figured a blog post exploring the mechanics of functions, promises, and the event loop would be fun.
+
+<!-- truncate -->
 
 :::info
 
@@ -21,7 +23,7 @@ This post explores the mechanics of async await using Elixir. Elixir's concurren
 
 Many of us were first introduced to async await when we learned JavaScript. Because JavaScript offers one of the most popular implementations, this introduction often shapes our understanding of async await, leading us to conflate the fundamental principles of the asynchronous programming model with the specific implementation decisions made by JavaScript.
 
-The most common misconceptions are that async await necessitates a non-blocking, single-threaded runtime. JavaScript's runtime is non-blocking primarily *because* it is single-threaded. However, asynchronous programming models can be implemented as both single-threaded and multi-threaded runtimes, and they can be implemented as non-blocking or blocking.
+The most common misconceptions are that async await necessitates a non-blocking, single-threaded runtime. JavaScript's runtime is non-blocking primarily _because_ it is single-threaded. However, asynchronous programming models can be implemented as both single-threaded and multi-threaded runtimes, and they can be implemented as non-blocking or blocking.
 
 ## From Sync to Async
 
@@ -47,7 +49,7 @@ An asynchronous execution consists of two round trips, one invoke-and-return-pro
 
 A promise can either be interpreted as a representation of the callee or as a representation of a future value. A promise is either pending, indicating that the callee is in progress and has not returned a value, or completed, indicating that the callee terminated and has retuned a value.
 
-If the promise is pending on await, the callers suspends its execution until the callee completes its execution and returns a value (Figure 1., center).  If the promise is completed on await, the caller continues with the returned value (Figure 1., right).
+If the promise is pending on await, the callers suspends its execution until the callee completes its execution and returns a value (Figure 1., center). If the promise is completed on await, the caller continues with the returned value (Figure 1., right).
 
 ## The Event Loop
 
@@ -59,9 +61,9 @@ For the remainder of this blog, we will implement async await facilities and an 
 
 ## Elixir Crash Course
 
-Elixir is a dynamically typed, functional programming language that runs on the Erlang virtual machine (BEAM). 
+Elixir is a dynamically typed, functional programming language that runs on the Erlang virtual machine (BEAM).
 
-Elixir's core abstraction is the process, an independent unit of execution with a unique identifier. `self()` yields the identifier of the current process. All code executes in the context of a process. Elixir processes execute concurrently, with each process executing its instructions sequentially. 
+Elixir's core abstraction is the process, an independent unit of execution with a unique identifier. `self()` yields the identifier of the current process. All code executes in the context of a process. Elixir processes execute concurrently, with each process executing its instructions sequentially.
 
 ```Elixir
 # Create a new process - You can use the Process Identifier to send messages to the process
@@ -82,7 +84,7 @@ Conversely, receiving a message is a blocking operation, the process will suspen
 ```elixir
 # Receive a message (blocking operation)
 receive do
-  {:Hello, name} -> 
+  {:Hello, name} ->
     IO.puts("Hello, #{name}!")
 end
 ```
@@ -132,7 +134,7 @@ end
 
 ## Async Await in Elixir
 
-The Async Await Module allows the developer to *express* the concurernt structure of a computation while the Event Loop Module *implements* the concurrent structure of a computation.
+The Async Await Module allows the developer to _express_ the concurernt structure of a computation while the Event Loop Module _implements_ the concurrent structure of a computation.
 
 We will map an asynchronous execution of a function on an Elixir process executing the function. We will use the identifier, the pid, of the process to refer to the execution and the promise representing the execution.
 
@@ -144,12 +146,12 @@ Our goal is to run something like this:
 
 # outer refers to the pid of the outer Elixir process
 outer = Async.invoke(fn ->
- 
+
   # inner refers to the pid of the inner Elixir Process
   inner = Async.invoke(fn ->
 
     42
-  
+
   end)
 
   # We use the pid to await the inner promise
@@ -186,7 +188,7 @@ end
 
 In Elixir terms:
 
-- `GenServer.call(EventLoop, {:invoke, func, args})` is a blocking call, however, as we will see below, the method always returns immediately, therefore, this call never suspends the caller. 
+- `GenServer.call(EventLoop, {:invoke, func, args})` is a blocking call, however, as we will see below, the method always returns immediately, therefore, this call never suspends the caller.
 - `GenServer.call(EventLoop, {:await, p})` is a blocking call and, as we will see below, the function may not always return immediately, therefore, this call may suspend the caller.
 
 ## The Event Loop
@@ -212,10 +214,11 @@ The Event Loop tracks two entities: promises and awaiters.
 }
 ```
 
-#### Promises 
+#### Promises
 
-`promises` associate a promise identifier with the status of the asynchronous execution the promise represents. The state of a promise is either 
-- `:pending`, indicating the execution is still in progress, or 
+`promises` associate a promise identifier with the status of the asynchronous execution the promise represents. The state of a promise is either
+
+- `:pending`, indicating the execution is still in progress, or
 - `{:completed, result}`, indicating the execution terminated with `result`.
 
 #### Awaiters
@@ -263,7 +266,7 @@ The invoke method spawns a new Elixir process and uses the process identifier, a
 
 ```elixir
   def handle_call({:invoke, func, args}, {caller, _} = _from, state) do
-    # Here, we are using the process id also as the promise id 
+    # Here, we are using the process id also as the promise id
     callee =
       spawn(fn ->
         GenServer.call(EventLoop, {:return, self(), apply(func, args)})
@@ -282,7 +285,7 @@ The invoke method spawns a new Elixir process and uses the process identifier, a
 
 This is the heart and soul of our Event Loop. When we call await, we distinguish between two cases:
 
-- If the promise is resolved, we reply to the caller immediately (not suspending the caller), returning the result. 
+- If the promise is resolved, we reply to the caller immediately (not suspending the caller), returning the result.
 - If the promise is pending, we do not reply to the caller immediately (suspending the caller), registering the caller as an awaiter on the promise.
 
 ```
@@ -332,7 +335,7 @@ Now we are ready to run the application. In case you want to reproduce the resul
 IO.inspect(self())
 
 outer = Async.invoke(fn ->
-  
+
   IO.inspect(self())
 
   inner = Async.invoke(fn ->
@@ -340,7 +343,7 @@ outer = Async.invoke(fn ->
     IO.inspect(self())
 
     42
-  
+
   end)
 
   v = Async.await(inner)
@@ -352,6 +355,7 @@ end)
 IO.puts(Async.await(outer))
 
 ```
+
 Running the application will print something like this:
 
 ```
@@ -360,6 +364,7 @@ Running the application will print something like this:
 #PID<0.270.0>
 84
 ```
+
 Additionally, we will get a entity diagram and a sequence diagram illustrating the structure and behavior in terms of executions and promises.
 
 #### Entity Diagram
@@ -369,7 +374,6 @@ Additionally, we will get a entity diagram and a sequence diagram illustrating t
 #### Sequence Diagram
 
 ![From Sync to Async](./img/sequence.png)
-
 
 ## Outlook
 

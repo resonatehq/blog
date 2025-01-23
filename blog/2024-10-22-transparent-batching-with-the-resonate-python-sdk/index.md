@@ -24,6 +24,8 @@ This post highlights one of the SDK’s features that might make you jump for jo
 
 Let's talk about batching.
 
+<!-- truncate -->
+
 ## Problem space
 
 To ensure we’re all on the same page, "batching" refers to the practice of grouping multiple operations into a single unit of work.

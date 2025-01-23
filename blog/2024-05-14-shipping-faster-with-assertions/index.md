@@ -2,10 +2,14 @@
 slug: shipping-faster-with-assertions
 title: Shipping Faster with Assertions
 authors: [gguerra]
-tags: []
+tags:
+  - testing
+  - error-handling
 ---
 
 Assertions are widely used in testing frameworks such as JUnit (for Java), Jest (for JavaScript), Pytest (for Python), and many others. These frameworks employ assertions to verify the expected external behavior of the system under test (SUT). However, it is less common for developers to use assertions within the production code of the SUT itself. In this post, I’ll explain how internal assertions can help developers ship code faster by catching bugs early, improving code quality and documenting expected behavior.
+
+<!-- truncate -->
 
 # What are Assertions?
 
