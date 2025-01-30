@@ -64,11 +64,11 @@ A request flow could also be **detached**:
 
 ![Service based architecture detached request flow diagram](/img/async-rpc/service-based-architecture-detached.svg)
 
-Or, depending on how many services involved, it could be a combination of all three.
+Or, depending on how many services are involved, it could be a combination of all three.
 
 ![Service based architecture chain/fan request flow diagram](/img/async-rpc/service-based-architecture-chain-fan-combo.svg)
 
-These request flows can happen in a synchronous manner, or asynchronous manner.
+These request flows can happen in a synchronous manner, or an asynchronous manner.
 
 ### Sync vs async
 
@@ -100,7 +100,7 @@ HTTP gateways enable REST APIs that can be built and launched rather quickly, an
 
 **Asynchronous**
 
-In an **asynchronous protocol** the caller can make the request, does more stuff, and then choose when to wait for the response.
+In an **asynchronous protocol** the caller can make the request, do more stuff, and then choose when to wait for the response.
 
 ```python
 def foo():
@@ -137,9 +137,9 @@ The struggle comes when developers must think about and explicitly deal with the
 
 ### Application-level complexities
 
-Writing code for business process needs and failure scenarios at the application level creates aweful developer experiences.
+Writing code for business process needs and failure scenarios at the application level creates awful developer experiences.
 
-Two of the fundamental complexities that you tend to see interleved with business process code at the application-level are:
+Two of the fundamental complexities that you tend to see interleaved with business process code at the application-level are:
 
 - **Supervision**: Think coordination and recovery.
   Developers end up creating bespoke or piecing together supervision solutions to solve for load balancing, service discovery, execution retries from network interruptions, and execution recovery from service failures (both on the caller and the callee side), making business process code very bloated and complex.
@@ -237,9 +237,9 @@ def foo(ctx):
 
 The previous code example showcases an asynchronous fan-out request flow where `bar()` and `baz()` are each invoked in their own services and each return 1.
 
-:::tip Example excersizes
+:::tip Example exercises
 
-To try out this example yourself, and several excersizes showcasing crash recovery, function execution retries, as well as a chain request flow, and a detached request flow, check out the [resonate-is-async-rpc](https://github.com/flossypurse/resonate-is-async-rpc) project on Github.
+To try out this example yourself, and several exercises showcasing crash recovery, function execution retries, as well as a chain request flow, and a detached request flow, check out the [resonate-is-async-rpc](https://github.com/flossypurse/resonate-is-async-rpc) project on Github.
 
 :::
 
@@ -252,7 +252,7 @@ It may choose to await on those results at any point in the function's sequence 
 If the results are not there when it asks for them, the function awaits.
 If the results are already there when it asks for them, the caller function gets them and continues on.
 
-The Resonate Server acts as a supervisor, so if the bar or baz services crash, the Resonate Server will know and will resend the respective invoke message if the services restore, or it will send the respective invoke message to the respective backup service.
+The Resonate Server acts as a supervisor, so if the bar or baz services crash, the Resonate Server will know and will resend the respective invoke message if the services is restored, or it will send the respective invoke message to the respective backup service.
 
 When `bar()` and/or `baz()` completes, the results are stored in the Durable Promise, and another Task is created.
 This time, the Task is routed to the foo service with a "Resume" message, "Resume `foo()` with these results" for example.
