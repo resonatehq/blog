@@ -142,7 +142,7 @@ Writing code for business process needs and failure scenarios at the application
 Two of the fundamental complexities that you tend to see interleaved with business process code at the application-level are:
 
 - **Supervision**: Think coordination and recovery.
-  Developers end up creating bespoke or piecing together supervision solutions to solve for load balancing, service discovery, execution retries from network interruptions, and execution recovery from service failures (both on the caller and the callee side), making business process code very bloated and complex.
+  Developers end up creating bespoke solutions, piecing together supervision components, to solve for load balancing, service discovery, execution retries from network interruptions, and execution recovery from service failures (both on the caller and the callee side), making business process code very bloated and complex.
 - **Distributed business process definition**: Persisting a job to a queue, for example, usually implies that there is no single place where the business flow of the application is defined.
   Essentially, the distributed application relies on a service or component each to play a part and then hand off the next step to another service or component, making it very hard for developers to reason about and maintain the behavior of the system.
   Even if there was a single top-level function that placed jobs onto a queue, and then listened to queues for responses, it would be non-trivial ensuring that function execution stayed alive the entire time.
