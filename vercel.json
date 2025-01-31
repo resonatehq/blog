@@ -4,6 +4,11 @@
       "source": "/distributed-async-await",
       "destination": "https://resonatehqio.substack.com/p/distributed-async-await",
       "permanent": true
+    },
+    {
+      "source": "/programming-model",
+      "destination": "https://resonatehqio.substack.com/p/programming-model",
+      "permanent": true
     }
   ]
 }
