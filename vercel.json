@@ -34,6 +34,11 @@
       "source": "/recipes-basic-failure-handling",
       "destination": "https://resonatehqio.substack.com/p/recipes-basic-failure-handling",
       "permanent": true
+    },
+    {
+      "source": "/shipping-faster-with-assertions",
+      "destination": "https://resonatehqio.substack.com/p/shipping-faster-with-assertions",
+      "permanent": true
     }
   ]
 }
