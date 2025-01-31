@@ -29,6 +29,11 @@
       "source": "/p-lang-for-oss-cloud-infastructure",
       "destination": "https://resonatehqio.substack.com/p/p-lang-for-oss-cloud-infastructure",
       "permanent": true
+    },
+    {
+      "source": "/recipes-basic-failure-handling",
+      "destination": "https://resonatehqio.substack.com/p/recipes-basic-failure-handling",
+      "permanent": true
     }
   ]
 }
