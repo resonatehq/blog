@@ -14,6 +14,11 @@
       "source": "/beware-the-custom-queue",
       "destination": "https://resonatehqio.substack.com/p/beware-the-custom-queue",
       "permanent": true
+    },
+    {
+      "source": "/deterministic-simulation-testing",
+      "destination": "https://resonatehqio.substack.com/p/deterministic-simulation-testing",
+      "permanent": true
     }
   ]
 }
