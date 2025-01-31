@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/distributed-async-await",
+      "destination": "https://resonatehqio.substack.com/p/distributed-async-await",
+      "permanent": true
+    }
+  ]
+}
