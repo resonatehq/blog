@@ -9,6 +9,11 @@
       "source": "/programming-model",
       "destination": "https://resonatehqio.substack.com/p/programming-model",
       "permanent": true
+    },
+    {
+      "source": "/beware-the-custom-queue",
+      "destination": "https://resonatehqio.substack.com/p/beware-the-custom-queue",
+      "permanent": true
     }
   ]
 }
