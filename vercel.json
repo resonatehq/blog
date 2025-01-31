@@ -19,6 +19,11 @@
       "source": "/deterministic-simulation-testing",
       "destination": "https://resonatehqio.substack.com/p/deterministic-simulation-testing",
       "permanent": true
+    },
+    {
+      "source": "/async-await-mechanics",
+      "destination": "https://resonatehqio.substack.com/p/async-await-mechanics",
+      "permanent": true
     }
   ]
 }
