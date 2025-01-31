@@ -24,6 +24,11 @@
       "source": "/async-await-mechanics",
       "destination": "https://resonatehqio.substack.com/p/async-await-mechanics",
       "permanent": true
+    },
+    {
+      "source": "/p-lang-for-oss-cloud-infastructure",
+      "destination": "https://resonatehqio.substack.com/p/p-lang-for-oss-cloud-infastructure",
+      "permanent": true
     }
   ]
 }
