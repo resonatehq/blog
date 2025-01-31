@@ -39,6 +39,16 @@
       "source": "/shipping-faster-with-assertions",
       "destination": "https://resonatehqio.substack.com/p/shipping-faster-with-assertions",
       "permanent": true
+    },
+    {
+      "source": "/invocation-handle-in-resonate",
+      "destination": "https://resonatehqio.substack.com/p/invocation-handle-in-resonate",
+      "permanent": true
+    },
+    {
+      "source": "/dst-finds-a-bug",
+      "destination": "https://resonatehqio.substack.com/p/dst-finds-a-bug",
+      "permanent": true
     }
   ]
 }
