@@ -49,6 +49,11 @@
       "source": "/dst-finds-a-bug",
       "destination": "https://resonatehqio.substack.com/p/dst-finds-a-bug",
       "permanent": true
+    },
+    {
+      "source": "/transparent-batching-with-the-resonate-python-sdk",
+      "destination": "https://resonatehqio.substack.com/p/transparent-batching-with-the-resonate-python-sdk",
+      "permanent": true
     }
   ]
 }
