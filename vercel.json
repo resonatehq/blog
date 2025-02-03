@@ -54,6 +54,11 @@
       "source": "/transparent-batching-with-the-resonate-python-sdk",
       "destination": "https://resonatehqio.substack.com/p/transparent-batching-with-the-resonate-python-sdk",
       "permanent": true
+    },
+    {
+      "source": "/",
+      "destination": "https://resonatehqio.substack.com/",
+      "permanent": true
     }
   ]
 }
