@@ -2,62 +2,62 @@
   "redirects": [
     {
       "source": "/distributed-async-await",
-      "destination": "https://resonatehqio.substack.com/p/distributed-async-await",
+      "destination": "https://journal.resonatehq.io/p/distributed-async-await",
       "permanent": true
     },
     {
       "source": "/programming-model",
-      "destination": "https://resonatehqio.substack.com/p/programming-model",
+      "destination": "https://journal.resonatehq.io/p/programming-model",
       "permanent": true
     },
     {
       "source": "/beware-the-custom-queue",
-      "destination": "https://resonatehqio.substack.com/p/beware-the-custom-queue",
+      "destination": "https://journal.resonatehq.io/p/beware-the-custom-queue",
       "permanent": true
     },
     {
       "source": "/deterministic-simulation-testing",
-      "destination": "https://resonatehqio.substack.com/p/deterministic-simulation-testing",
+      "destination": "https://journal.resonatehq.io/p/deterministic-simulation-testing",
       "permanent": true
     },
     {
       "source": "/async-await-mechanics",
-      "destination": "https://resonatehqio.substack.com/p/async-await-mechanics",
+      "destination": "https://journal.resonatehq.io/p/async-await-mechanics",
       "permanent": true
     },
     {
       "source": "/p-lang-for-oss-cloud-infastructure",
-      "destination": "https://resonatehqio.substack.com/p/p-lang-for-oss-cloud-infastructure",
+      "destination": "https://journal.resonatehq.io/p/p-lang-for-oss-cloud-infastructure",
       "permanent": true
     },
     {
       "source": "/recipes-basic-failure-handling",
-      "destination": "https://resonatehqio.substack.com/p/recipes-basic-failure-handling",
+      "destination": "https://journal.resonatehq.io/p/recipes-basic-failure-handling",
       "permanent": true
     },
     {
       "source": "/shipping-faster-with-assertions",
-      "destination": "https://resonatehqio.substack.com/p/shipping-faster-with-assertions",
+      "destination": "https://journal.resonatehq.io/p/shipping-faster-with-assertions",
       "permanent": true
     },
     {
       "source": "/invocation-handle-in-resonate",
-      "destination": "https://resonatehqio.substack.com/p/invocation-handle-in-resonate",
+      "destination": "https://journal.resonatehq.io/p/invocation-handle-in-resonate",
       "permanent": true
     },
     {
       "source": "/dst-finds-a-bug",
-      "destination": "https://resonatehqio.substack.com/p/dst-finds-a-bug",
+      "destination": "https://journal.resonatehq.io/p/dst-finds-a-bug",
       "permanent": true
     },
     {
       "source": "/transparent-batching-with-the-resonate-python-sdk",
-      "destination": "https://resonatehqio.substack.com/p/transparent-batching-with-the-resonate-python-sdk",
+      "destination": "https://journal.resonatehq.io/p/transparent-batching-with-the-resonate-python-sdk",
       "permanent": true
     },
     {
       "source": "/",
-      "destination": "https://resonatehqio.substack.com/",
+      "destination": "https://journal.resonatehq.io/",
       "permanent": true
     }
   ]
